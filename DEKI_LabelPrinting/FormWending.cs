@@ -958,18 +958,6 @@ namespace DEKI_LabelPrinting
                     var authToken = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authToken);
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                    // Example: Inserting a customer
-                    var json = @"{
-                ""number"": ""CUST-1001"",
-                ""displayName"": ""Test Customer"",
-                ""address"": {
-                    ""street"": ""123 Main Street"",
-                    ""city"": ""Mumbai"",
-                    ""postalCode"": ""400001"",
-                    ""country"": ""IN""
-                }
-            }";
                     CapLedEntry entry = new CapLedEntry()
                     {
                         DocumentNo= cbProductionNo.Text, OperationNo= cbProductionNo.Text, GrossWeight=Convert.ToDecimal(lblGrossWeight.Text)
@@ -1000,6 +988,7 @@ namespace DEKI_LabelPrinting
         public string OperationNo { get; set; }
         public decimal NetWeight { get; set; }
         public decimal GrossWeight { get; set; }
+        public int OutputQuantity { get; set; }
     }
     public class GridItemClass
     {
