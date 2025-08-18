@@ -431,14 +431,14 @@ namespace DEKI_LabelPrinting
             decimal Qty = 0;
             if (cbCostCenterGroup.SelectedIndex <= 0) { return 0; }
             //Check if user has already completed the Packing 
-            string chkPkg = @"SELECT 'Result' = [OutputQuantity] FROM [CapLedEntryAPI] Where DocumentNo=@DocumentNo and WorkCenterGroupCode=@WorkCenterGroupCode";
+            string chkPkg = @"SELECT 'Result' = [OutputQuantity] FROM [CapLedEntryAPI] Where OrderNo=@OrderNo and WorkCenterGroupCode=@WorkCenterGroupCode";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 try
                 {
                     using (SqlCommand command = new SqlCommand(chkPkg, connection))
                     {
-                        command.Parameters.AddWithValue("@DocumentNo", cbProductionNo.Text);
+                        command.Parameters.AddWithValue("@OrderNo", cbProductionNo.Text);
                         command.Parameters.AddWithValue("@WorkCenterGroupCode", cbCostCenterGroup.Text);
                         command.CommandType = System.Data.CommandType.Text;
                         if (connection.State == System.Data.ConnectionState.Closed) connection.Open();
@@ -619,6 +619,18 @@ namespace DEKI_LabelPrinting
             {
                 if (cbProductionNo.SelectedIndex <= 0) { MessageBox.Show("Select Production Order No to continue."); return; }
                 if (cbCostCenterGroup.SelectedIndex < 0) { MessageBox.Show("Select Work center group to continue."); return; }
+                if (string.IsNullOrEmpty(txtQuantity.Text)) { MessageBox.Show("Order Quanity must be greater than 0."); return; }
+                if (!string.IsNullOrEmpty(txtQuantity.Text))
+                {
+                    int Qty = 0;
+                    if (int.TryParse(txtQuantity.Text, out Qty))
+                    {
+                        if (Qty <= 0)
+                        {
+                            MessageBox.Show("Order Quanity must be greater than 0."); return;
+                        }
+                    }
+                }
                 decimal iWeight = 0;
                 decimal.TryParse(lblWeight.Text, out iWeight);
 

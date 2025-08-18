@@ -71,16 +71,17 @@ namespace DEKI_LabelPrinting
                             foreach (var order in itemsResponse.Entries)
                             {
                                 string InsertStatement = @"if NOT Exists(select [DocumentNo] From CapLedEntryAPI Where [DocumentNo]=@DocumentNo) BEGIN 
-                                                INSERT INTO [CapLedEntryAPI]([DocumentNo],[OperationNo],[WorkCenterGroupCode],[NetWeight]
+                                                INSERT INTO [CapLedEntryAPI]([DocumentNo],OrderNo,[OperationNo],[WorkCenterGroupCode],[NetWeight]
                                                                     ,[GrossWeight],OutputQuantity) 
                                      OUTPUT INSERTED.RowID 
-                                                VALUES (@DocumentNo,@OperationNo,@WorkCenterGroupCode,@NetWeight,@GrossWeight,@OutputQuantity);
+                                            VALUES (@DocumentNo,@OrderNo,@OperationNo,@WorkCenterGroupCode,@NetWeight,@GrossWeight,@OutputQuantity);
                                     END
-                                    ELSE BEGIN select ROWID From CapLedEntryAPI Where [DocumentNo]=@DocumentNo END";
+                                    ELSE BEGIN select ROWID From CapLedEntryAPI Where [DocumentNo]=@DocumentNo And OrderNo=@OrderNo END";
 
                                 using (SqlCommand cmd = new SqlCommand(InsertStatement, conn))
                                 {
                                     cmd.Parameters.AddWithValue("@DocumentNo", order.DocumentNo);
+                                    cmd.Parameters.AddWithValue("@OrderNo", order.OrderNo);
                                     cmd.Parameters.AddWithValue("@OperationNo", order.OperationNo);
                                     cmd.Parameters.AddWithValue("@WorkCenterGroupCode", order.WorkCenterGroupCode);
                                     cmd.Parameters.AddWithValue("@NetWeight", order.NetWeight);
@@ -129,6 +130,7 @@ namespace DEKI_LabelPrinting
         [JsonPropertyName("@odata.etag")]
         public string ODataEtag { get; set; }
         public string DocumentNo { get; set; }
+        public string OrderNo { get; set; }
         public string OperationNo { get; set; }
         public string WorkCenterGroupCode { get; set; }
         public decimal NetWeight { get; set; }
