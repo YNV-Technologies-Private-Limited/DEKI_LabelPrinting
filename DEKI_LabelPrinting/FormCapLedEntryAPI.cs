@@ -97,7 +97,6 @@ namespace DEKI_LabelPrinting
 
                             MessageBox.Show($"Sync Completed Successfully.....");
                         }
-                        //    Console.WriteLine($"No: {vendor.No}, Name: {vendor.Name}, State: {vendor.State_Code}, GST Type: {vendor.GST_Vendor_Type}");
                     }
                     catch (Exception ex)
                     {
