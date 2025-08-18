@@ -47,6 +47,7 @@ namespace DEKI_LabelPrinting.Model
         public DateTime Due_Date { get; set; }
         public string Assigned_User_ID { get; set; }
         public DateTime Creation_Date { get; set; }
+        public string LOTNo { get; set; }
     }
 
     public class RoutingLine

@@ -26,6 +26,7 @@ namespace DEKI_LabelPrinting
         string username = Convert.ToString(System.Configuration.ConfigurationManager.AppSettings["APIUser"]);// "administrator";
         string password = Convert.ToString(System.Configuration.ConfigurationManager.AppSettings["APIPassword"]);//"CMk95*@$46@";
         int dataSplitIndex = Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["dataSplitIndex"]);
+        DateTime ProdOrderCutOffDate = Convert.ToDateTime(System.Configuration.ConfigurationManager.AppSettings["ProdOrderCutOffDate"]);
         List<RelProdOrder> List_ProductionOrders = new List<RelProdOrder>();
         List<RoutingLine> List_RoutingLine = new List<RoutingLine>();
         List<string> ProductionOrderNos = new List<string>();
@@ -153,6 +154,7 @@ namespace DEKI_LabelPrinting
             }
             try
             {
+                ProdOrderCutOffDate = Convert.ToDateTime(System.Configuration.ConfigurationManager.AppSettings["ProdOrderCutOffDate"]);
                 LoadProductionNos(false);
             }
             catch (Exception ex)
@@ -211,11 +213,12 @@ namespace DEKI_LabelPrinting
                     using (SqlConnection conn = new SqlConnection(connectionString))
                     {
                         string InsertStatement = @"select [Status],[No],[Description],[Source_No],[Routing_No]
-                                                                    ,[Quantity],[Due_Date],[Assigned_User_ID],Creation_Date
-                                                From ProductionOrder Where ([IsCompleted]=0 OR [IsCompleted] IS NULL)";
+                                                                    ,[Quantity],[Due_Date],[Assigned_User_ID],Creation_Date,LotNo
+                                                From ProductionOrder Where ([IsCompleted]=0 OR [IsCompleted] IS NULL) AND Due_Date>=@Due_Date";
 
                         using (SqlCommand cmd = new SqlCommand(InsertStatement, conn))
                         {
+                            cmd.Parameters.AddWithValue("@Due_Date", ProdOrderCutOffDate.ToString("dd-MMM-yyyy"));
                             if (conn.State == ConnectionState.Closed) conn.Open();
                             SqlDataAdapter adapter = new SqlDataAdapter(cmd);
                             DataTable dt = new DataTable();
@@ -232,7 +235,8 @@ namespace DEKI_LabelPrinting
                                     Quantity = Convert.ToInt32(dr["Quantity"]),
                                     Due_Date = Convert.ToDateTime(dr["Due_Date"]),
                                     Creation_Date = Convert.ToDateTime(dr["Creation_Date"]),
-                                    Assigned_User_ID = Convert.ToString(dr["Assigned_User_ID"])
+                                    Assigned_User_ID = Convert.ToString(dr["Assigned_User_ID"]),
+                                    LOTNo= Convert.ToString(dr["LotNo"])
                                 };
                                 List_ProductionOrders.Add(order);
                                 ProductionOrderNos.Add(order.No);
@@ -273,10 +277,10 @@ namespace DEKI_LabelPrinting
 
                                             string InsertStatement = @"if NOT Exists(select [No] From ProductionOrder Where [No]=@No) BEGIN 
                                                 INSERT INTO [ProductionOrder]([Status],[No],[Description],[Source_No],[Routing_No]
-                                                                    ,[Quantity],[Due_Date],[Assigned_User_ID],Creation_Date) 
+                                                                    ,[Quantity],[Due_Date],[Assigned_User_ID],Creation_Date,LOTNo) 
                                      OUTPUT INSERTED.RowID 
                                                 VALUES (@Status,@No,@Description,@Source_No,@Routing_No
-                                                    ,@Quantity,@Due_Date,@Assigned_User_ID,@Creation_Date);
+                                                    ,@Quantity,@Due_Date,@Assigned_User_ID,@Creation_Date,@LOTNo);
                                     END
                                     ELSE BEGIN Update ProductionOrder SET [Description]=@Description,[Source_No]=@Source_No,[Routing_No]=@Routing_No
                                                ,[Quantity]=@Quantity,[Due_Date]=@Due_Date,[Assigned_User_ID]=@Assigned_User_ID Where [No]=@No END";
@@ -292,6 +296,7 @@ namespace DEKI_LabelPrinting
                                                 cmd.Parameters.AddWithValue("@Due_Date", order.Due_Date);
                                                 cmd.Parameters.AddWithValue("@Assigned_User_ID", order.Assigned_User_ID);
                                                 cmd.Parameters.AddWithValue("@Creation_Date", order.Creation_Date);
+                                                cmd.Parameters.AddWithValue("@LOTNo", order.LOTNo);
                                                 Console.WriteLine($"Order Record ID:-  {cmd.ExecuteScalar()}");
                                             }
                                             iRecord += 1;
@@ -394,17 +399,19 @@ namespace DEKI_LabelPrinting
             if ((null != relProdOrder))
             {
                 cbCostCenterGroup.Enabled = txtLotNo.Enabled = cbCostCenterGroup.Enabled = txtItemNo.Enabled = true;
-                txtItemNo.Text = relProdOrder.Description;
-                txtItemNo.Enabled = false;
+                //txtItemNo.Text = relProdOrder.Description;
+                //txtItemNo.Enabled = false;
                 //txtLotNo.BackColor = Color.White;
-                txtLotNo.Text = relProdOrder.Source_No;
-                txtLotNo.Enabled = false;
+                txtItemNo.Text = relProdOrder.Source_No;
+                txtItemNo.Enabled = false;
                 txtRoutingNo.Text = relProdOrder.Routing_No;
                 txtRoutingNo.Enabled = false;
                 txtProductionDate.Text = relProdOrder.Creation_Date.ToString("dd/MM/yyyy");
                 txtProductionDate.Enabled = false;
-                txtQuantity.Text = Convert.ToString(relProdOrder.Quantity);
-                txtQuantity.Enabled = false;
+                //txtQuantity.Text = Convert.ToString(relProdOrder.Quantity);
+                //txtQuantity.Enabled = false;
+                txtLotNo.Text = relProdOrder.LOTNo;
+                txtLotNo.Enabled = false;
 
                 txtRoutingNo.BackColor = txtOperationNo.BackColor = txtProductionDate.BackColor = txtQuantity.BackColor = txtItemNo.BackColor = txtLotNo.BackColor = Color.White;
                 txtRoutingNo.ForeColor = txtOperationNo.ForeColor = txtProductionDate.ForeColor = Color.Black;
@@ -413,9 +420,35 @@ namespace DEKI_LabelPrinting
                 //List<string> routings=from c as List_RoutingLine.ase
                 //txtWorkCenterGroup.Text=relProdOrder.
                 BindWorkCenterGroup();
+                //get Qty from CapLedEntryAPI table on basis of [DocumentNo] and [OperationNo]
+                txtQuantity.Text = getOrderNoQty().ToString();
+                txtQuantity.Enabled = false;
+
             }
         }
-
+        decimal getOrderNoQty()
+        {
+            decimal Qty = 0;
+            if (cbCostCenterGroup.SelectedIndex <= 0) { return 0; }
+            //Check if user has already completed the Packing 
+            string chkPkg = @"SELECT 'Result' = [OutputQuantity] FROM [CapLedEntryAPI] Where DocumentNo=@DocumentNo and WorkCenterGroupCode=@WorkCenterGroupCode";
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    using (SqlCommand command = new SqlCommand(chkPkg, connection))
+                    {
+                        command.Parameters.AddWithValue("@DocumentNo", cbProductionNo.Text);
+                        command.Parameters.AddWithValue("@WorkCenterGroupCode", cbCostCenterGroup.Text);
+                        command.CommandType = System.Data.CommandType.Text;
+                        if (connection.State == System.Data.ConnectionState.Closed) connection.Open();
+                        Qty = Convert.ToDecimal(command.ExecuteScalar());
+                    }
+                }
+                catch { }
+            }
+            return Qty;
+        }
         void BindWorkCenterGroup()
         {
             bool pkgCompleted = false;
@@ -445,7 +478,7 @@ namespace DEKI_LabelPrinting
             }
 
             //Check if Work Center Group is in DB Table -> tbl_ProdOrder_WorkCenterGroup
-            string cmdStr = @"SELECT [WorkCenterGroup] FROM [tbl_ProdOrder_WorkCenterGroup] Where Order_No=@Order_No AND [IsCompleted]=0";
+            string cmdStr = @"SELECT [WorkCenterGroup]='--Select--',[RowNo]=0 UNION SELECT [WorkCenterGroup],[RowNo]=1 FROM [tbl_ProdOrder_WorkCenterGroup] Where Order_No=@Order_No AND [IsCompleted]=0";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 try
@@ -836,6 +869,8 @@ namespace DEKI_LabelPrinting
 
         private void cbCostCenterGroup_SelectedIndexChanged(object sender, EventArgs e)
         {
+            txtOperationNo.Text = string.Empty;
+            if (cbCostCenterGroup.SelectedIndex <= 0) return;
             string cmdStr = @"SELECT [Operation_No] FROM [RoutingLine] Where Work_Center_Group_Code=@Work_Center_Group_Code And [Routing_No]=@Routing_No";
             try
             {
@@ -898,8 +933,9 @@ namespace DEKI_LabelPrinting
 
         private void pbSyncvOrders_Click(object sender, EventArgs e)
         {
-            FormRelProdOrdersSync itemSync = new FormRelProdOrdersSync();
-            itemSync.ShowDialog();
+            FormCapLedEntryAPI fnr_CapLedEntryAPI = new FormCapLedEntryAPI();
+            //FormRelProdOrdersSync itemSync = new FormRelProdOrdersSync();
+            fnr_CapLedEntryAPI.ShowDialog();
         }
 
         private void btnClear_Click(object sender, EventArgs e)

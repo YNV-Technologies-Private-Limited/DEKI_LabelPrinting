@@ -96,6 +96,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FormCapLedEntryAPI.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormCapLedEntryAPI.Designer.cs">
+      <DependentUpon>FormCapLedEntryAPI.cs</DependentUpon>
+    </Compile>
     <Compile Include="FormItemsSync.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -141,6 +147,9 @@
       <DependentUpon>ProgressForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="FormCapLedEntryAPI.resx">
+      <DependentUpon>FormCapLedEntryAPI.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FormItemsSync.resx">
       <DependentUpon>FormItemsSync.cs</DependentUpon>
     </EmbeddedResource>
