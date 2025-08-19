@@ -50,7 +50,7 @@
             this.txtRoutingNo = new System.Windows.Forms.TextBox();
             this.pbRefresh = new System.Windows.Forms.PictureBox();
             this.cbProductionNo = new System.Windows.Forms.ComboBox();
-            this.cbCostCenterGroup = new System.Windows.Forms.ComboBox();
+            this.cbWorkCenterGroup = new System.Windows.Forms.ComboBox();
             this.lblWeight = new System.Windows.Forms.Label();
             this.dgvWeight = new System.Windows.Forms.DataGridView();
             this.label7 = new System.Windows.Forms.Label();
@@ -323,15 +323,15 @@
             // 
             // cbCostCenterGroup
             // 
-            this.cbCostCenterGroup.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
-            this.cbCostCenterGroup.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cbCostCenterGroup.FormattingEnabled = true;
-            this.cbCostCenterGroup.Location = new System.Drawing.Point(524, 141);
-            this.cbCostCenterGroup.Margin = new System.Windows.Forms.Padding(2);
-            this.cbCostCenterGroup.Name = "cbCostCenterGroup";
-            this.cbCostCenterGroup.Size = new System.Drawing.Size(181, 30);
-            this.cbCostCenterGroup.TabIndex = 3;
-            this.cbCostCenterGroup.SelectedIndexChanged += new System.EventHandler(this.cbCostCenterGroup_SelectedIndexChanged);
+            this.cbWorkCenterGroup.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
+            this.cbWorkCenterGroup.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbWorkCenterGroup.FormattingEnabled = true;
+            this.cbWorkCenterGroup.Location = new System.Drawing.Point(524, 141);
+            this.cbWorkCenterGroup.Margin = new System.Windows.Forms.Padding(2);
+            this.cbWorkCenterGroup.Name = "cbWorkCenterGroup";
+            this.cbWorkCenterGroup.Size = new System.Drawing.Size(181, 30);
+            this.cbWorkCenterGroup.TabIndex = 3;
+            this.cbWorkCenterGroup.SelectedIndexChanged += new System.EventHandler(this.cbWorkCenterGroup_SelectedIndexChanged);
             // 
             // lblWeight
             // 
@@ -590,7 +590,7 @@
             this.Controls.Add(this.label7);
             this.Controls.Add(this.dgvWeight);
             this.Controls.Add(this.lblWeight);
-            this.Controls.Add(this.cbCostCenterGroup);
+            this.Controls.Add(this.cbWorkCenterGroup);
             this.Controls.Add(this.cbProductionNo);
             this.Controls.Add(this.pbRefresh);
             this.Controls.Add(this.txtRoutingNo);
@@ -644,7 +644,7 @@
         private System.Windows.Forms.TextBox txtRoutingNo;
         private System.Windows.Forms.PictureBox pbRefresh;
         private System.Windows.Forms.ComboBox cbProductionNo;
-        private System.Windows.Forms.ComboBox cbCostCenterGroup;
+        private System.Windows.Forms.ComboBox cbWorkCenterGroup;
         private System.Windows.Forms.Label lblWeight;
         private System.Windows.Forms.DataGridView dgvWeight;
         private System.Windows.Forms.Label label7;

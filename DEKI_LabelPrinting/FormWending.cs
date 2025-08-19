@@ -376,10 +376,10 @@ namespace DEKI_LabelPrinting
         {
             try
             {
-                cbProductionNo.Enabled = cbCostCenterGroup.Enabled = true;
+                cbProductionNo.Enabled = cbWorkCenterGroup.Enabled = true;
                 LoadProductionNos(true);
                 PktsList = new List<GridItemClass>();
-                cbCostCenterGroup.Enabled = true;
+                cbWorkCenterGroup.Enabled = true;
                 lblNetWeight.Text = "0.00";
                 dgvWeight.DataSource = PktsList;
             }
@@ -398,7 +398,7 @@ namespace DEKI_LabelPrinting
             RelProdOrder relProdOrder = (RelProdOrder)cbProductionNo.SelectedItem;
             if ((null != relProdOrder))
             {
-                cbCostCenterGroup.Enabled = txtLotNo.Enabled = cbCostCenterGroup.Enabled = txtItemNo.Enabled = true;
+                cbWorkCenterGroup.Enabled = txtLotNo.Enabled = cbWorkCenterGroup.Enabled = txtItemNo.Enabled = true;
                 //txtItemNo.Text = relProdOrder.Description;
                 //txtItemNo.Enabled = false;
                 //txtLotNo.BackColor = Color.White;
@@ -429,7 +429,7 @@ namespace DEKI_LabelPrinting
         decimal getOrderNoQty()
         {
             decimal Qty = 0;
-            if (cbCostCenterGroup.SelectedIndex <= 0) { return 0; }
+            if (cbWorkCenterGroup.SelectedIndex <= 0) { return 0; }
             //Check if user has already completed the Packing 
             string chkPkg = @"SELECT 'Result' = [OutputQuantity] FROM [CapLedEntryAPI] Where OrderNo=@OrderNo and WorkCenterGroupCode=@WorkCenterGroupCode";
             using (SqlConnection connection = new SqlConnection(connectionString))
@@ -439,7 +439,7 @@ namespace DEKI_LabelPrinting
                     using (SqlCommand command = new SqlCommand(chkPkg, connection))
                     {
                         command.Parameters.AddWithValue("@OrderNo", cbProductionNo.Text);
-                        command.Parameters.AddWithValue("@WorkCenterGroupCode", cbCostCenterGroup.Text);
+                        command.Parameters.AddWithValue("@WorkCenterGroupCode", cbWorkCenterGroup.Text);
                         command.CommandType = System.Data.CommandType.Text;
                         if (connection.State == System.Data.ConnectionState.Closed) connection.Open();
                         Qty = Convert.ToDecimal(command.ExecuteScalar());
@@ -473,7 +473,7 @@ namespace DEKI_LabelPrinting
                 MessageBox.Show($"{cbProductionNo.Text} already been completed.\nSelect another Order No to continue.", ""
                 , MessageBoxButtons.OK, MessageBoxIcon.Information);
                 cbProductionNo.SelectedIndex = 0;
-                cbCostCenterGroup.DataSource = null;
+                cbWorkCenterGroup.DataSource = null;
                 return;
             }
 
@@ -491,20 +491,20 @@ namespace DEKI_LabelPrinting
                         SqlDataAdapter adapter = new SqlDataAdapter(command);
                         DataTable dt = new DataTable();
                         adapter.Fill(dt);
-                        cbCostCenterGroup.DataSource = null;
+                        cbWorkCenterGroup.DataSource = null;
                         if (dt.Rows.Count > 0)
                         {
-                            cbCostCenterGroup.DataSource = dt;
-                            cbCostCenterGroup.DisplayMember = "WorkCenterGroup";
+                            cbWorkCenterGroup.DataSource = dt;
+                            cbWorkCenterGroup.DisplayMember = "WorkCenterGroup";
                         }
                         else
                         {
                             var matchedRoutes = List_RoutingLine.Where(r => r.Routing_No == txtRoutingNo.Text).ToList();
-                            cbCostCenterGroup.DataSource = matchedRoutes;
-                            cbCostCenterGroup.DisplayMember = "Work_Center_Group_Code";
+                            cbWorkCenterGroup.DataSource = matchedRoutes;
+                            cbWorkCenterGroup.DisplayMember = "Work_Center_Group_Code";
                             InsertOrderWorkCenterGroup(matchedRoutes);
                         }
-                        cbCostCenterGroup.DropDownStyle = ComboBoxStyle.DropDownList;
+                        cbWorkCenterGroup.DropDownStyle = ComboBoxStyle.DropDownList;
                     }
                 }
                 catch (Exception ex)
@@ -604,11 +604,12 @@ namespace DEKI_LabelPrinting
                     txtItemNo.Text = relProdOrder.Description;
                     txtLotNo.Text = relProdOrder.Source_No;
                     txtRoutingNo.Text = relProdOrder.Routing_No;
+                    //BindWorkCenterGroup();
                     var matchedRoutes = List_RoutingLine.Where(r => r.Routing_No == txtRoutingNo.Text).ToList();
-                    cbCostCenterGroup.DataSource = null;
-                    cbCostCenterGroup.DataSource = matchedRoutes;
-                    cbCostCenterGroup.DisplayMember = "Work_Center_Group_Code";
-                    cbCostCenterGroup.DropDownStyle = ComboBoxStyle.DropDownList;
+                    cbWorkCenterGroup.DataSource = null;
+                    cbWorkCenterGroup.DataSource = matchedRoutes;
+                    cbWorkCenterGroup.DisplayMember = "Work_Center_Group_Code";
+                    cbWorkCenterGroup.DropDownStyle = ComboBoxStyle.DropDownList;
                 }
             }
         }
@@ -618,7 +619,7 @@ namespace DEKI_LabelPrinting
             try
             {
                 if (cbProductionNo.SelectedIndex <= 0) { MessageBox.Show("Select Production Order No to continue."); return; }
-                if (cbCostCenterGroup.SelectedIndex < 0) { MessageBox.Show("Select Work center group to continue."); return; }
+                if (cbWorkCenterGroup.SelectedIndex < 0) { MessageBox.Show("Select Work center group to continue."); return; }
                 if (string.IsNullOrEmpty(txtQuantity.Text)) { MessageBox.Show("Order Quanity must be greater than 0."); return; }
                 if (!string.IsNullOrEmpty(txtQuantity.Text))
                 {
@@ -643,7 +644,7 @@ namespace DEKI_LabelPrinting
                     return;
                 }
 
-                txtItemNo.Enabled = cbCostCenterGroup.Enabled = txtLotNo.Enabled = false;
+                txtItemNo.Enabled = cbWorkCenterGroup.Enabled = txtLotNo.Enabled = false;
                 int SrnO = PktsList.Count + 1;
                 decimal NetWeight = 0;
                 foreach (GridItemClass pkt in PktsList)
@@ -669,7 +670,7 @@ namespace DEKI_LabelPrinting
                 dgvWeight.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
                 dgvWeight.Refresh();
 
-                cbCostCenterGroup.Enabled = false;
+                cbWorkCenterGroup.Enabled = false;
                 lblNetWeight.Text = NetWeight.ToString();
                 cbProductionNo.Enabled = false;
                 lblNetWeight.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -715,7 +716,7 @@ namespace DEKI_LabelPrinting
 
                         command.Parameters.AddWithValue("@Production_No", cbProductionNo.Text);
                         command.Parameters.AddWithValue("@ROUTING_NO", txtRoutingNo.Text);
-                        command.Parameters.AddWithValue("@WORK_CENTER_GROUP", cbCostCenterGroup.Text);
+                        command.Parameters.AddWithValue("@WORK_CENTER_GROUP", cbWorkCenterGroup.Text);
                         command.Parameters.AddWithValue("@Operation_No", txtOperationNo.Text);
                         command.Parameters.AddWithValue("@Quantity", txtQuantity.Text);
                         command.Parameters.AddWithValue("@Item_No", txtItemNo.Text);
@@ -766,13 +767,13 @@ namespace DEKI_LabelPrinting
                 decimal.TryParse(lblNetWeight.Text, out netWeight);
 
                 bool isWithinTolerance = IsWithinTolerance(grossWeight, netWeight, 0.05m);
-                string workCenterGroup = cbCostCenterGroup.Text;
+                string workCenterGroup = cbWorkCenterGroup.Text;
                 bool isPacking = false;
                 if (isWithinTolerance)
                 {
                     string cmdStr = @"Update [tbl_ProdOrder_WorkCenterGroup] SET [IsCompleted]=1  Where [Order_No]=@Order_No AND [WorkCenterGroup]=@WorkCenterGroup";
 
-                    if (cbCostCenterGroup.Text.Trim().Equals("Packing", StringComparison.CurrentCultureIgnoreCase))
+                    if (cbWorkCenterGroup.Text.Trim().Equals("Packing", StringComparison.CurrentCultureIgnoreCase))
                     {
                         cmdStr += "; Update [ProductionOrder] set IsCompleted=1 Where [No]=@Order_No;";
                         isPacking = true;
@@ -785,7 +786,7 @@ namespace DEKI_LabelPrinting
                             {
                                 #region --Add Parameters --
                                 command.Parameters.AddWithValue("@Order_No", cbProductionNo.Text);
-                                command.Parameters.AddWithValue("@WorkCenterGroup", cbCostCenterGroup.Text);
+                                command.Parameters.AddWithValue("@WorkCenterGroup", cbWorkCenterGroup.Text);
                                 #endregion
 
                                 command.CommandType = System.Data.CommandType.Text;
@@ -803,7 +804,7 @@ namespace DEKI_LabelPrinting
                                         commandline.ExecuteNonQuery();
 
                                         PktsList = new List<GridItemClass>();
-                                        cbCostCenterGroup.Enabled = true;
+                                        cbWorkCenterGroup.Enabled = true;
                                         dgvWeight.DataSource = PktsList;
                                         lblNetWeight.Text = "0.00";
 
@@ -879,10 +880,10 @@ namespace DEKI_LabelPrinting
             btnGetData_MouseLeave(sender, e);
         }
 
-        private void cbCostCenterGroup_SelectedIndexChanged(object sender, EventArgs e)
+        private void cbWorkCenterGroup_SelectedIndexChanged(object sender, EventArgs e)
         {
             txtOperationNo.Text = string.Empty;
-            if (cbCostCenterGroup.SelectedIndex <= 0) return;
+            if (cbWorkCenterGroup.SelectedIndex <= 0) return;
             string cmdStr = @"SELECT [Operation_No] FROM [RoutingLine] Where Work_Center_Group_Code=@Work_Center_Group_Code And [Routing_No]=@Routing_No";
             try
             {
@@ -893,7 +894,7 @@ namespace DEKI_LabelPrinting
                         using (SqlCommand command = new SqlCommand(cmdStr, connection))
                         {
                             #region --Add Parameters --
-                            command.Parameters.AddWithValue("@Work_Center_Group_Code", cbCostCenterGroup.Text);
+                            command.Parameters.AddWithValue("@Work_Center_Group_Code", cbWorkCenterGroup.Text);
                             command.Parameters.AddWithValue("@Routing_No", txtRoutingNo.Text);
                             #endregion
 
@@ -957,7 +958,7 @@ namespace DEKI_LabelPrinting
                 if (DialogResult.Yes == MessageBox.Show("Do you want to Delete the Weighing Entries?", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question))
                 {
                     PktsList = new List<GridItemClass>();
-                    cbProductionNo.Enabled = txtItemNo.Enabled = cbCostCenterGroup.Enabled = txtLotNo.Enabled = true;
+                    cbProductionNo.Enabled = txtItemNo.Enabled = cbWorkCenterGroup.Enabled = txtLotNo.Enabled = true;
                     dgvWeight.DataSource = null;
                     lblNetWeight.Text = "0.00";
                     if (HeaderRowID > 0)
