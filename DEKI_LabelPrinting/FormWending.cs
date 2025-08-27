@@ -478,7 +478,11 @@ namespace DEKI_LabelPrinting
             }
 
             //Check if Work Center Group is in DB Table -> tbl_ProdOrder_WorkCenterGroup
-            string cmdStr = @"SELECT [WorkCenterGroup]='--Select--',[RowNo]=0 UNION SELECT [WorkCenterGroup],[RowNo]=1 FROM [tbl_ProdOrder_WorkCenterGroup] Where Order_No=@Order_No AND [IsCompleted]=0";
+            string cmdStr = @"With tbl as(SELECT [WorkCenterGroup]='--Select--',[RowNo]=0 UNION 
+                    SELECT [WorkCenterGroup],[RowNo]=(SELECT [Operation_No] FROM [RoutingLine]
+                                Where Work_Center_Group_Code=[tbl_ProdOrder_WorkCenterGroup].[WorkCenterGroup]
+                And [Routing_No]=@Routing_No)
+FROM [tbl_ProdOrder_WorkCenterGroup] Where Order_No=@Order_No AND [IsCompleted]=0) Select WorkCenterGroup, RowNo From tbl Order by RowNo";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 try
@@ -486,6 +490,7 @@ namespace DEKI_LabelPrinting
                     using (SqlCommand command = new SqlCommand(cmdStr, connection))
                     {
                         command.Parameters.AddWithValue("@Order_No", cbProductionNo.Text);
+                        command.Parameters.AddWithValue("@Routing_No", txtRoutingNo.Text);
                         command.CommandType = System.Data.CommandType.Text;
                         if (connection.State == System.Data.ConnectionState.Closed) connection.Open();
                         SqlDataAdapter adapter = new SqlDataAdapter(command);
