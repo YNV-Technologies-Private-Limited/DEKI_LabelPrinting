@@ -32,9 +32,9 @@ namespace DEKI_LabelPrinting
         List<string> ProductionOrderNos = new List<string>();
         bool FormLoadEventCompleted = false;
         SerialPort _serialPort = new SerialPort();
-
+        long Entry_No = 0; string DocumentNo = string.Empty;
         List<GridItemClass> PktsList = new List<GridItemClass>();
-
+        List<CapLedEntryModel> List_CapLedEntryModel = new List<CapLedEntryModel>();
         public string ProdOrders
         {
             get
@@ -162,6 +162,8 @@ namespace DEKI_LabelPrinting
                 MessageBox.Show($"Error in Loading Details from ERP.\n\n{ex.Message}.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             OpenSerialPort();
+
+            LoadCapLedEntries();
 
             FormLoadEventCompleted = true;
         }
@@ -372,6 +374,35 @@ namespace DEKI_LabelPrinting
             //}
         }
 
+        async Task LoadCapLedEntries()
+        {
+            var handler = new HttpClientHandler
+            {
+                Credentials = new System.Net.NetworkCredential(username, password)
+            };
+            using (HttpClient client = new HttpClient(handler)) {
+                try
+                {
+                    var response = await client.GetAsync($"{APIUrl.TrimEnd('/')}/CapLedEntryAPI");
+                    string json = await response.Content.ReadAsStringAsync();
+                    if (!string.IsNullOrEmpty(json))
+                    {
+                        var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                        var entries = JsonSerializer.Deserialize<ODataResponse<CapLedEntryModel>>(json, options);
+                        List_CapLedEntryModel = new List<CapLedEntryModel>();
+                        foreach (var entry in entries.Value)
+                        {
+                            List_CapLedEntryModel.Add(entry);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error: {ex.Message}");
+                }
+            }
+        }
+
         private void pbRefresh_Click(object sender, EventArgs e)
         {
             try
@@ -420,33 +451,49 @@ namespace DEKI_LabelPrinting
                 //List<string> routings=from c as List_RoutingLine.ase
                 //txtWorkCenterGroup.Text=relProdOrder.
                 BindWorkCenterGroup();
-                //get Qty from CapLedEntryAPI table on basis of [DocumentNo] and [OperationNo]
-                txtQuantity.Text = getOrderNoQty().ToString();
-                txtQuantity.Enabled = false;
-
             }
         }
         decimal getOrderNoQty()
         {
             decimal Qty = 0;
             if (cbWorkCenterGroup.SelectedIndex <= 0) { return 0; }
-            //Check if user has already completed the Packing 
-            string chkPkg = @"SELECT 'Result' = [OutputQuantity] FROM [CapLedEntryAPI] Where OrderNo=@OrderNo and WorkCenterGroupCode=@WorkCenterGroupCode";
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            if (List_CapLedEntryModel.Count <= 0) { return 0; }
+
+            //get Qty from CapLedEntryAPI table on basis of [DocumentNo] and [OperationNo]
+            var vrOututQty = List_CapLedEntryModel.Where(r => r.OrderNo == cbProductionNo.Text
+            && r.WorkCenterGroupCode==cbWorkCenterGroup.Text);
+            if (null != vrOututQty)
             {
-                try
+                if (vrOututQty.Count() > 0)
                 {
-                    using (SqlCommand command = new SqlCommand(chkPkg, connection))
-                    {
-                        command.Parameters.AddWithValue("@OrderNo", cbProductionNo.Text);
-                        command.Parameters.AddWithValue("@WorkCenterGroupCode", cbWorkCenterGroup.Text);
-                        command.CommandType = System.Data.CommandType.Text;
-                        if (connection.State == System.Data.ConnectionState.Closed) connection.Open();
-                        Qty = Convert.ToDecimal(command.ExecuteScalar());
-                    }
+                    CapLedEntryModel obj=(CapLedEntryModel)vrOututQty.FirstOrDefault();
+                    //txtQuantity.Text = getOrderNoQty().ToString();
+
+                    this.Entry_No = obj.Entry_No;
+                    DocumentNo = obj.DocumentNo;
+                    txtQuantity.Text = obj.OutputQuantity.ToString();
+                    txtQuantity.Enabled = false;
                 }
-                catch { }
             }
+
+
+            //Check if user has already completed the Packing 
+            //string chkPkg = @"SELECT 'Result' = [OutputQuantity] FROM [CapLedEntryAPI] Where OrderNo=@OrderNo and WorkCenterGroupCode=@WorkCenterGroupCode";
+            //using (SqlConnection connection = new SqlConnection(connectionString))
+            //{
+            //    try
+            //    {
+            //        using (SqlCommand command = new SqlCommand(chkPkg, connection))
+            //        {
+            //            command.Parameters.AddWithValue("@OrderNo", cbProductionNo.Text);
+            //            command.Parameters.AddWithValue("@WorkCenterGroupCode", cbWorkCenterGroup.Text);
+            //            command.CommandType = System.Data.CommandType.Text;
+            //            if (connection.State == System.Data.ConnectionState.Closed) connection.Open();
+            //            Qty = Convert.ToDecimal(command.ExecuteScalar());
+            //        }
+            //    }
+            //    catch { }
+            //}
             return Qty;
         }
         void BindWorkCenterGroup()
@@ -609,8 +656,8 @@ FROM [tbl_ProdOrder_WorkCenterGroup] Where Order_No=@Order_No AND [IsCompleted]=
                     RelProdOrder relProdOrder = (RelProdOrder)cbProductionNo.SelectedItem;
                     if ((null != relProdOrder))
                     {
-                        txtItemNo.Text = relProdOrder.Description;
-                        txtLotNo.Text = relProdOrder.Source_No;
+                        txtItemNo.Text = relProdOrder.Source_No;
+                        txtLotNo.Text = relProdOrder.LOTNo;
                         txtRoutingNo.Text = relProdOrder.Routing_No;
                         
                         BindWorkCenterGroup();
@@ -631,10 +678,11 @@ FROM [tbl_ProdOrder_WorkCenterGroup] Where Order_No=@Order_No AND [IsCompleted]=
             try
             {
                 if (cbProductionNo.SelectedIndex <= 0) { MessageBox.Show("Select Production Order No to continue."); return; }
-                if (cbWorkCenterGroup.SelectedIndex < 0) { MessageBox.Show("Select Work center group to continue."); return; }
+                if (cbWorkCenterGroup.SelectedIndex <= 0) { MessageBox.Show("Select Work center group to continue."); cbWorkCenterGroup.Enabled = true; cbWorkCenterGroup.Focus(); return; }
                 if (string.IsNullOrEmpty(txtQuantity.Text)) { MessageBox.Show("Order Quanity must be greater than 0."); return; }
                 if (!string.IsNullOrEmpty(txtQuantity.Text))
                 {
+                    cbWorkCenterGroup.Enabled = false;
                     int Qty = 0;
                     if (int.TryParse(txtQuantity.Text, out Qty))
                     {
@@ -817,11 +865,11 @@ FROM [tbl_ProdOrder_WorkCenterGroup] Where Order_No=@Order_No AND [IsCompleted]=
 
                                         PktsList = new List<GridItemClass>();
                                         cbWorkCenterGroup.Enabled = true;
-                                        dgvWeight.DataSource = PktsList;
-                                        lblNetWeight.Text = "0.00";
-
+                                        
                                         Application.DoEvents();
                                         updateEPR();
+                                        dgvWeight.DataSource = PktsList;
+                                        lblNetWeight.Text = "0.00";
                                         Application.DoEvents();
 
                                         BindWorkCenterGroup();
@@ -931,6 +979,7 @@ FROM [tbl_ProdOrder_WorkCenterGroup] Where Order_No=@Order_No AND [IsCompleted]=
             {
                 MessageBox.Show(ex.Message);
             }
+            getOrderNoQty();
         }
 
         private void FormWending_KeyUp(object sender, KeyEventArgs e)
@@ -1019,15 +1068,20 @@ FROM [tbl_ProdOrder_WorkCenterGroup] Where Order_No=@Order_No AND [IsCompleted]=
                     var authToken = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authToken);
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    CapLedEntry entry = new CapLedEntry()
+                    CapLedEntryModel entry = new CapLedEntryModel()
                     {
-                        DocumentNo= cbProductionNo.Text, OperationNo= cbProductionNo.Text, GrossWeight=Convert.ToDecimal(lblGrossWeight.Text)
-                        , NetWeight=Convert.ToDecimal(lblNetWeight.Text)
+                        Entry_No = this.Entry_No
+                        , OrderNo = cbProductionNo.Text
+                        , DocumentNo = this.DocumentNo
+                        , OperationNo = txtOperationNo.Text
+                        , WorkCenterGroupCode = cbWorkCenterGroup.Text
+                        , GrossWeight = Convert.ToDecimal(lblGrossWeight.Text)
+                        , NetWeight = Convert.ToDecimal(lblNetWeight.Text)
+                        ,OutputQuantity=Convert.ToInt32(txtQuantity.Text)
                     };
                     var content = new StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(entry), Encoding.UTF8, "application/json");
-
-                    //var content = new StringContent(json, Encoding.UTF8, "application/json");
-                    HttpResponseMessage response = await client.PostAsync($"{APIUrl.TrimEnd('/')}/CapLedEntryAPI", content);
+                    ////var content = new StringContent(json, Encoding.UTF8, "application/json");
+                    HttpResponseMessage response = await client.PutAsync($"{APIUrl.TrimEnd('/')}/CapLedEntryAPI", content);
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -1043,9 +1097,12 @@ FROM [tbl_ProdOrder_WorkCenterGroup] Where Order_No=@Order_No AND [IsCompleted]=
         }
     }
 
-    public class CapLedEntry
+    public class CapLedEntryModel
     {
+        public long Entry_No { get; set; }
+        public string OrderNo { get; set; }
         public string DocumentNo { get; set; }
+        public string WorkCenterGroupCode { get; set; }
         public string OperationNo { get; set; }
         public decimal NetWeight { get; set; }
         public decimal GrossWeight { get; set; }
