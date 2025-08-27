@@ -492,17 +492,18 @@ namespace DEKI_LabelPrinting
                         DataTable dt = new DataTable();
                         adapter.Fill(dt);
                         cbWorkCenterGroup.DataSource = null;
-                        if (dt.Rows.Count > 0)
+                        if (dt.Rows.Count > 1)
                         {
                             cbWorkCenterGroup.DataSource = dt;
                             cbWorkCenterGroup.DisplayMember = "WorkCenterGroup";
                         }
                         else
                         {
-                            var matchedRoutes = List_RoutingLine.Where(r => r.Routing_No == txtRoutingNo.Text).ToList();
-                            cbWorkCenterGroup.DataSource = matchedRoutes;
-                            cbWorkCenterGroup.DisplayMember = "Work_Center_Group_Code";
+                            var matchedRoutes = List_RoutingLine.Where(r => r.Routing_No == txtRoutingNo.Text).ToList().Distinct().ToList();
+                            //cbWorkCenterGroup.DataSource = matchedRoutes;
+                            //cbWorkCenterGroup.DisplayMember = "Work_Center_Group_Code";
                             InsertOrderWorkCenterGroup(matchedRoutes);
+                            BindWorkCenterGroup();
                         }
                         cbWorkCenterGroup.DropDownStyle = ComboBoxStyle.DropDownList;
                     }
@@ -598,19 +599,25 @@ namespace DEKI_LabelPrinting
             if ((e.KeyCode == Keys.Tab) || (e.KeyCode == Keys.Enter))
             {
                 if (cbProductionNo.Text.Contains("--Select--")) return;
-                RelProdOrder relProdOrder = (RelProdOrder)cbProductionNo.SelectedItem;
-                if ((null != relProdOrder))
+                try
                 {
-                    txtItemNo.Text = relProdOrder.Description;
-                    txtLotNo.Text = relProdOrder.Source_No;
-                    txtRoutingNo.Text = relProdOrder.Routing_No;
-                    //BindWorkCenterGroup();
-                    var matchedRoutes = List_RoutingLine.Where(r => r.Routing_No == txtRoutingNo.Text).ToList();
-                    cbWorkCenterGroup.DataSource = null;
-                    cbWorkCenterGroup.DataSource = matchedRoutes;
-                    cbWorkCenterGroup.DisplayMember = "Work_Center_Group_Code";
-                    cbWorkCenterGroup.DropDownStyle = ComboBoxStyle.DropDownList;
+                    RelProdOrder relProdOrder = (RelProdOrder)cbProductionNo.SelectedItem;
+                    if ((null != relProdOrder))
+                    {
+                        txtItemNo.Text = relProdOrder.Description;
+                        txtLotNo.Text = relProdOrder.Source_No;
+                        txtRoutingNo.Text = relProdOrder.Routing_No;
+                        
+                        BindWorkCenterGroup();
+                        //var matchedRoutes = List_RoutingLine.Where(r => r.Routing_No == txtRoutingNo.Text).Distinct().ToList();
+                        //cbWorkCenterGroup.DataSource = null;
+                        //cbWorkCenterGroup.DataSource = matchedRoutes;
+                        //cbWorkCenterGroup.DisplayMember = "Work_Center_Group_Code";
+                        //cbWorkCenterGroup.Items.Insert(0, "-- Select --");
+                        //cbWorkCenterGroup.DropDownStyle = ComboBoxStyle.DropDownList;
+                    }
                 }
+                catch(Exception ex) { MessageBox.Show(ex.Message); }
             }
         }
 
