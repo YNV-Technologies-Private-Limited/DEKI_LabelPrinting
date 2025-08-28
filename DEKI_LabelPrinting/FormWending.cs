@@ -49,6 +49,8 @@ namespace DEKI_LabelPrinting
                 return "RoutingLines";
             }
         }
+
+        public string UpdateCLE { get { return "UpdateCLE"; } }
         public FormWending()
         {
             InitializeComponent();
@@ -1068,10 +1070,9 @@ FROM [tbl_ProdOrder_WorkCenterGroup] Where Order_No=@Order_No AND [IsCompleted]=
                     var authToken = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authToken);
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    CapLedEntryModel entry = new CapLedEntryModel()
+                    UpdateLedEntryModel entry = new UpdateLedEntryModel()
                     {
-                        Entry_No = this.Entry_No
-                        , OrderNo = cbProductionNo.Text
+                         OrderNo = cbProductionNo.Text
                         , DocumentNo = this.DocumentNo
                         , OperationNo = txtOperationNo.Text
                         , WorkCenterGroupCode = cbWorkCenterGroup.Text
@@ -1081,7 +1082,7 @@ FROM [tbl_ProdOrder_WorkCenterGroup] Where Order_No=@Order_No AND [IsCompleted]=
                     };
                     var content = new StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(entry), Encoding.UTF8, "application/json");
                     ////var content = new StringContent(json, Encoding.UTF8, "application/json");
-                    HttpResponseMessage response = await client.PutAsync($"{APIUrl.TrimEnd('/')}/CapLedEntryAPI", content);
+                    HttpResponseMessage response = await client.PostAsync($"{APIUrl.TrimEnd('/')}/{UpdateCLE}", content);
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -1096,7 +1097,16 @@ FROM [tbl_ProdOrder_WorkCenterGroup] Where Order_No=@Order_No AND [IsCompleted]=
             }
         }
     }
-
+    public class UpdateLedEntryModel
+    {
+        public string OrderNo { get; set; }
+        public string DocumentNo { get; set; }
+        public string WorkCenterGroupCode { get; set; }
+        public string OperationNo { get; set; }
+        public decimal NetWeight { get; set; }
+        public decimal GrossWeight { get; set; }
+        public int OutputQuantity { get; set; }
+    }
     public class CapLedEntryModel
     {
         public long Entry_No { get; set; }
