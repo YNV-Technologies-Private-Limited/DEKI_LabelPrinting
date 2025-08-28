@@ -630,9 +630,20 @@ FROM [tbl_ProdOrder_WorkCenterGroup] Where Order_No=@Order_No AND [IsCompleted]=
                             if (double.TryParse(txtQuantity.Text, out Qty))
                             {
                                 double grams = 0;
-                                grams = (ItemGrodsWeight * Qty);
-                                double kilograms = grams / 1000;
-                                lblGrossWeight.Text = kilograms.ToString();
+                                try
+                                {
+                                    grams = (ItemGrodsWeight * Qty);
+                                    double kilograms = grams / 1000;
+                                    lblGrossWeight.Text = kilograms.ToString();
+                                    Application.DoEvents();
+                                    lblGrossWeight.Refresh();
+                                }
+                                catch { }
+                                finally
+                                {
+                                    Application.DoEvents();
+                                    Application.DoEvents();
+                                }
                             }
                         }
                     }
@@ -982,6 +993,7 @@ FROM [tbl_ProdOrder_WorkCenterGroup] Where Order_No=@Order_No AND [IsCompleted]=
                 MessageBox.Show(ex.Message);
             }
             getOrderNoQty();
+            getItemNetWeight(txtItemNo.Text);
         }
 
         private void FormWending_KeyUp(object sender, KeyEventArgs e)
@@ -1094,6 +1106,18 @@ FROM [tbl_ProdOrder_WorkCenterGroup] Where Order_No=@Order_No AND [IsCompleted]=
                     }
                 }
                 catch { }
+            }
+        }
+
+        private void txtQuantity_TextChanged(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrEmpty(txtQuantity.Text))
+            {
+                double Qty = 0;
+                if (double.TryParse(txtQuantity.Text, out Qty))
+                {
+                    getItemNetWeight(txtItemNo.Text);
+                }
             }
         }
     }
