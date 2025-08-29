@@ -35,6 +35,8 @@ namespace DEKI_LabelPrinting
         long Entry_No = 0; string DocumentNo = string.Empty;
         List<GridItemClass> PktsList = new List<GridItemClass>();
         List<CapLedEntryModel> List_CapLedEntryModel = new List<CapLedEntryModel>();
+
+        double tolerancePercent = 10.0;
         public string ProdOrders
         {
             get
@@ -209,49 +211,49 @@ namespace DEKI_LabelPrinting
             RelProdOrder prodOrder = new RelProdOrder() { No = "--Select--", Quantity = 0, Source_No = "", Status = "Dummy", Description = "" };
             List_ProductionOrders.Add(prodOrder);
 
-            if (!IsForceLoad)
-            {
-                try
-                {
-                    ProductionOrderNos = new List<string>();
-                    using (SqlConnection conn = new SqlConnection(connectionString))
-                    {
-                        string InsertStatement = @"select [Status],[No],[Description],[Source_No],[Routing_No]
-                                                                    ,[Quantity],[Due_Date],[Assigned_User_ID],Creation_Date,LotNo
-                                                From ProductionOrder Where ([IsCompleted]=0 OR [IsCompleted] IS NULL) AND Due_Date>=@Due_Date";
+            //if (!IsForceLoad)
+            //{
+            //    try
+            //    {
+            //        ProductionOrderNos = new List<string>();
+            //        using (SqlConnection conn = new SqlConnection(connectionString))
+            //        {
+            //            string InsertStatement = @"select [Status],[No],[Description],[Source_No],[Routing_No]
+            //                                                        ,[Quantity],[Due_Date],[Assigned_User_ID],Creation_Date,LotNo
+            //                                    From ProductionOrder Where ([IsCompleted]=0 OR [IsCompleted] IS NULL) AND Due_Date>=@Due_Date";
 
-                        using (SqlCommand cmd = new SqlCommand(InsertStatement, conn))
-                        {
-                            cmd.Parameters.AddWithValue("@Due_Date", ProdOrderCutOffDate.ToString("dd-MMM-yyyy"));
-                            if (conn.State == ConnectionState.Closed) conn.Open();
-                            SqlDataAdapter adapter = new SqlDataAdapter(cmd);
-                            DataTable dt = new DataTable();
-                            adapter.Fill(dt);
-                            foreach (DataRow dr in dt.Rows)
-                            {
-                                RelProdOrder order = new RelProdOrder()
-                                {
-                                    Status = Convert.ToString(dr["Status"]),
-                                    No = Convert.ToString(dr["No"]),
-                                    Description = Convert.ToString(dr["Description"]),
-                                    Source_No = Convert.ToString(dr["Source_No"]),
-                                    Routing_No = Convert.ToString(dr["Routing_No"]),
-                                    Quantity = Convert.ToInt32(dr["Quantity"]),
-                                    Due_Date = Convert.ToDateTime(dr["Due_Date"]),
-                                    Creation_Date = Convert.ToDateTime(dr["Creation_Date"]),
-                                    Assigned_User_ID = Convert.ToString(dr["Assigned_User_ID"]),
-                                    LOTNo= Convert.ToString(dr["LotNo"])
-                                };
-                                List_ProductionOrders.Add(order);
-                                ProductionOrderNos.Add(order.No);
-                            }
-                        }
-                    }
-                }
-                catch (Exception exp) { MessageBox.Show(exp.Message); }
-            }
-            else
-            {
+            //            using (SqlCommand cmd = new SqlCommand(InsertStatement, conn))
+            //            {
+            //                cmd.Parameters.AddWithValue("@Due_Date", ProdOrderCutOffDate.ToString("dd-MMM-yyyy"));
+            //                if (conn.State == ConnectionState.Closed) conn.Open();
+            //                SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+            //                DataTable dt = new DataTable();
+            //                adapter.Fill(dt);
+            //                foreach (DataRow dr in dt.Rows)
+            //                {
+            //                    RelProdOrder order = new RelProdOrder()
+            //                    {
+            //                        Status = Convert.ToString(dr["Status"]),
+            //                        No = Convert.ToString(dr["No"]),
+            //                        Description = Convert.ToString(dr["Description"]),
+            //                        Source_No = Convert.ToString(dr["Source_No"]),
+            //                        Routing_No = Convert.ToString(dr["Routing_No"]),
+            //                        Quantity = Convert.ToInt32(dr["Quantity"]),
+            //                        Due_Date = Convert.ToDateTime(dr["Due_Date"]),
+            //                        Creation_Date = Convert.ToDateTime(dr["Creation_Date"]),
+            //                        Assigned_User_ID = Convert.ToString(dr["Assigned_User_ID"]),
+            //                        LOTNo= Convert.ToString(dr["LotNo"])
+            //                    };
+            //                    List_ProductionOrders.Add(order);
+            //                    ProductionOrderNos.Add(order.No);
+            //                }
+            //            }
+            //        }
+            //    }
+            //    catch (Exception exp) { MessageBox.Show(exp.Message); }
+            //}
+            //else
+            //{
                 var handler = new HttpClientHandler
                 {
                     Credentials = new System.Net.NetworkCredential(username, password) // domain is optional
@@ -273,45 +275,45 @@ namespace DEKI_LabelPrinting
                                 if (item is object)
                                 {
                                     RelProdOrder order = (RelProdOrder)item;
-                                    if (order.Status.Equals("Released", StringComparison.CurrentCultureIgnoreCase))
-                                    {
-                                        using (SqlConnection conn = new SqlConnection(connectionString))
-                                        {
-                                            if (conn.State == ConnectionState.Closed) conn.Open();
+                                    //if (order.Status.Equals("Released", StringComparison.CurrentCultureIgnoreCase))
+                                    //{
+                                    //    using (SqlConnection conn = new SqlConnection(connectionString))
+                                    //    {
+                                    //        if (conn.State == ConnectionState.Closed) conn.Open();
 
-                                            string InsertStatement = @"if NOT Exists(select [No] From ProductionOrder Where [No]=@No) BEGIN 
-                                                INSERT INTO [ProductionOrder]([Status],[No],[Description],[Source_No],[Routing_No]
-                                                                    ,[Quantity],[Due_Date],[Assigned_User_ID],Creation_Date,LOTNo) 
-                                     OUTPUT INSERTED.RowID 
-                                                VALUES (@Status,@No,@Description,@Source_No,@Routing_No
-                                                    ,@Quantity,@Due_Date,@Assigned_User_ID,@Creation_Date,@LOTNo);
-                                    END
-                                    ELSE BEGIN Update ProductionOrder SET [Description]=@Description,[Source_No]=@Source_No,[Routing_No]=@Routing_No
-                                               ,[Quantity]=@Quantity,[Due_Date]=@Due_Date,[Assigned_User_ID]=@Assigned_User_ID Where [No]=@No END";
+                                    //        string InsertStatement = @"if NOT Exists(select [No] From ProductionOrder Where [No]=@No) BEGIN 
+                                    //            INSERT INTO [ProductionOrder]([Status],[No],[Description],[Source_No],[Routing_No]
+                                    //                                ,[Quantity],[Due_Date],[Assigned_User_ID],Creation_Date,LOTNo) 
+                                    // OUTPUT INSERTED.RowID 
+                                    //            VALUES (@Status,@No,@Description,@Source_No,@Routing_No
+                                    //                ,@Quantity,@Due_Date,@Assigned_User_ID,@Creation_Date,@LOTNo);
+                                    //END
+                                    //ELSE BEGIN Update ProductionOrder SET [Description]=@Description,[Source_No]=@Source_No,[Routing_No]=@Routing_No
+                                    //           ,[Quantity]=@Quantity,[Due_Date]=@Due_Date,[Assigned_User_ID]=@Assigned_User_ID Where [No]=@No END";
 
-                                            using (SqlCommand cmd = new SqlCommand(InsertStatement, conn))
-                                            {
-                                                cmd.Parameters.AddWithValue("@No", order.No);
-                                                cmd.Parameters.AddWithValue("@Status", order.Status);
-                                                cmd.Parameters.AddWithValue("@Description", order.Description);
-                                                cmd.Parameters.AddWithValue("@Source_No", order.Source_No);
-                                                cmd.Parameters.AddWithValue("@Routing_No", order.Routing_No);
-                                                cmd.Parameters.AddWithValue("@Quantity", order.Quantity);
-                                                cmd.Parameters.AddWithValue("@Due_Date", order.Due_Date);
-                                                cmd.Parameters.AddWithValue("@Assigned_User_ID", order.Assigned_User_ID);
-                                                cmd.Parameters.AddWithValue("@Creation_Date", order.Creation_Date);
-                                                cmd.Parameters.AddWithValue("@LOTNo", order.LOTNo);
-                                                Console.WriteLine($"Order Record ID:-  {cmd.ExecuteScalar()}");
-                                            }
-                                            iRecord += 1;
-                                            Application.DoEvents();
-                                        }
-                                        //List_ProductionOrders.Add(order);
-                                        //ProductionOrderNos.Add(order.No);
-                                    }
+                                    //        using (SqlCommand cmd = new SqlCommand(InsertStatement, conn))
+                                    //        {
+                                    //            cmd.Parameters.AddWithValue("@No", order.No);
+                                    //            cmd.Parameters.AddWithValue("@Status", order.Status);
+                                    //            cmd.Parameters.AddWithValue("@Description", order.Description);
+                                    //            cmd.Parameters.AddWithValue("@Source_No", order.Source_No);
+                                    //            cmd.Parameters.AddWithValue("@Routing_No", order.Routing_No);
+                                    //            cmd.Parameters.AddWithValue("@Quantity", order.Quantity);
+                                    //            cmd.Parameters.AddWithValue("@Due_Date", order.Due_Date);
+                                    //            cmd.Parameters.AddWithValue("@Assigned_User_ID", order.Assigned_User_ID);
+                                    //            cmd.Parameters.AddWithValue("@Creation_Date", order.Creation_Date);
+                                    //            cmd.Parameters.AddWithValue("@LOTNo", order.LOTNo);
+                                    //            Console.WriteLine($"Order Record ID:-  {cmd.ExecuteScalar()}");
+                                    //        }
+                                    //        iRecord += 1;
+                                    //        Application.DoEvents();
+                                    //    }
+                                        List_ProductionOrders.Add(order);
+                                        ProductionOrderNos.Add(order.No);
+                                    //}
                                 }
                             }
-                            LoadProductionOrderNos(false);
+                            //LoadProductionOrderNos(false);
                         }
                     }
                     catch (Exception ex)
@@ -319,7 +321,7 @@ namespace DEKI_LabelPrinting
                         MessageBox.Show($"Error: {ex.Message}");
                     }
                 }
-            }
+            //}
         }
 
         async Task LoadRoutingLines()
@@ -413,8 +415,9 @@ namespace DEKI_LabelPrinting
                 LoadProductionNos(true);
                 PktsList = new List<GridItemClass>();
                 cbWorkCenterGroup.Enabled = true;
-                lblNetWeight.Text = "0.00";
+                txtQuantity.Text = lblNetWeight.Text = lblItemWeight.Text = "0.00";
                 dgvWeight.DataSource = PktsList;
+                txtItemNo.Text = txtProductionDate.Text = txtRoutingNo.Text = txtLotNo.Text = string.Empty;
             }
             catch (Exception ex)
             {
@@ -690,6 +693,7 @@ FROM [tbl_ProdOrder_WorkCenterGroup] Where Order_No=@Order_No AND [IsCompleted]=
         {
             try
             {
+                if (string.IsNullOrEmpty(txtLotNo.Text)) { MessageBox.Show("Order LOT No can not be blank."); return; }
                 if (cbProductionNo.SelectedIndex <= 0) { MessageBox.Show("Select Production Order No to continue."); return; }
                 if (cbWorkCenterGroup.SelectedIndex <= 0) { MessageBox.Show("Select Work center group to continue."); cbWorkCenterGroup.Enabled = true; cbWorkCenterGroup.Focus(); return; }
                 if (string.IsNullOrEmpty(txtQuantity.Text)) { MessageBox.Show("Order Quanity must be greater than 0."); return; }
@@ -705,13 +709,22 @@ FROM [tbl_ProdOrder_WorkCenterGroup] Where Order_No=@Order_No AND [IsCompleted]=
                         }
                     }
                 }
-                decimal iWeight = 0;
-                decimal.TryParse(lblWeight.Text, out iWeight);
+                double iWeight = 0;
+                double.TryParse(lblWeight.Text, out iWeight);
 
-                decimal iGrossWeight = 0;
-                decimal.TryParse(lblGrossWeight.Text, out iGrossWeight);
+                double iGrossWeight = 0;
+                double.TryParse(lblGrossWeight.Text, out iGrossWeight);
 
-                if (iWeight > iGrossWeight)
+
+                //bool isWithinTolerance = IsWithinTolerance(Convert.ToDecimal(iGrossWeight), Convert.ToDecimal(iWeight), 0.05m);
+
+                double toleranceValue = (iGrossWeight * tolerancePercent) / 100.0;
+
+                double minWeight = iGrossWeight - toleranceValue;
+                double maxWeight = iGrossWeight + toleranceValue;
+
+                //if (iWeight > iGrossWeight)
+                if (iWeight > maxWeight)
                 {
                     MessageBox.Show($"Packet Weight '{iWeight}' can not be more then Gross Weight {iGrossWeight}.", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
@@ -719,7 +732,7 @@ FROM [tbl_ProdOrder_WorkCenterGroup] Where Order_No=@Order_No AND [IsCompleted]=
 
                 txtItemNo.Enabled = cbWorkCenterGroup.Enabled = txtLotNo.Enabled = false;
                 int SrnO = PktsList.Count + 1;
-                decimal NetWeight = 0;
+                double NetWeight = 0;
                 foreach (GridItemClass pkt in PktsList)
                 {
                     NetWeight += pkt.PacketWeight;
@@ -755,7 +768,7 @@ FROM [tbl_ProdOrder_WorkCenterGroup] Where Order_No=@Order_No AND [IsCompleted]=
         }
 
         long HeaderRowID = 0;
-        void InsertPackingLine(decimal PktWeight)
+        void InsertPackingLine(double PktWeight)
         {
             string cmdStr = @"if NOT Exists(select [RowID] From tbl_Packing_Header Where [Production_No]=@Production_No And ROUTING_NO=@Routing_No
                                                 AND Operation_No=@Operation_No) 
@@ -956,6 +969,7 @@ FROM [tbl_ProdOrder_WorkCenterGroup] Where Order_No=@Order_No AND [IsCompleted]=
         private void cbWorkCenterGroup_SelectedIndexChanged(object sender, EventArgs e)
         {
             txtOperationNo.Text = string.Empty;
+            txtQuantity.Text = "0";
             if (cbWorkCenterGroup.SelectedIndex <= 0) return;
             string cmdStr = @"SELECT [Operation_No] FROM [RoutingLine] Where Work_Center_Group_Code=@Work_Center_Group_Code And [Routing_No]=@Routing_No";
             try
@@ -1145,6 +1159,6 @@ FROM [tbl_ProdOrder_WorkCenterGroup] Where Order_No=@Order_No AND [IsCompleted]=
     public class GridItemClass
     {
         public int SrNo { get; set; }
-        public Decimal PacketWeight { get; set; }
+        public double PacketWeight { get; set; }
     }
 }
