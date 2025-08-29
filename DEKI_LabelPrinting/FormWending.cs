@@ -877,73 +877,85 @@ FROM [tbl_ProdOrder_WorkCenterGroup] Where Order_No=@Order_No AND [IsCompleted]=
                 bool isWithinTolerance = IsWithinTolerance(grossWeight, netWeight, 0.05m);
                 string workCenterGroup = cbWorkCenterGroup.Text;
                 bool isPacking = false;
-                if (isWithinTolerance)
+                if (dgvWeight.Rows.Count > 0)
                 {
-                    string cmdStr = @"Update [tbl_ProdOrder_WorkCenterGroup] SET [IsCompleted]=1  Where [Order_No]=@Order_No AND [WorkCenterGroup]=@WorkCenterGroup";
-
-                    if (cbWorkCenterGroup.Text.Trim().Equals("Packing", StringComparison.CurrentCultureIgnoreCase))
+                    if ((netWeight > 0) && (grossWeight > 0))
                     {
-                        cmdStr += "; Update [ProductionOrder] set IsCompleted=1 Where [No]=@Order_No;";
-                        isPacking = true;
-                    }
-                    using (SqlConnection connection = new SqlConnection(connectionString))
-                    {
-                        try
+                        if (DialogResult.Yes == MessageBox.Show("Do you want to submit the weighing data to ERP?", "Confirmation", MessageBoxButtons.YesNo
+                        , MessageBoxIcon.Question))
                         {
-                            using (SqlCommand command = new SqlCommand(cmdStr, connection))
-                            {
-                                #region --Add Parameters --
-                                command.Parameters.AddWithValue("@Order_No", cbProductionNo.Text);
-                                command.Parameters.AddWithValue("@WorkCenterGroup", cbWorkCenterGroup.Text);
-                                #endregion
+                            //if (isWithinTolerance)
+                            //if (netWeight <= grossWeight)
+                            //{
+                            string cmdStr = @"Update [tbl_ProdOrder_WorkCenterGroup] SET [IsCompleted]=1  Where [Order_No]=@Order_No AND [WorkCenterGroup]=@WorkCenterGroup";
 
-                                command.CommandType = System.Data.CommandType.Text;
-                                if (connection.State == System.Data.ConnectionState.Closed) connection.Open();
-                                int iRowUpdate = Convert.ToInt32(command.ExecuteNonQuery());
-                                if (iRowUpdate > 0)
+                            if (cbWorkCenterGroup.Text.Trim().Equals("Packing", StringComparison.CurrentCultureIgnoreCase))
+                            {
+                                cmdStr += "; Update [ProductionOrder] set IsCompleted=1 Where [No]=@Order_No;";
+                                isPacking = true;
+                            }
+                            using (SqlConnection connection = new SqlConnection(connectionString))
+                            {
+                                try
                                 {
-                                    string str = "Update [tbl_Packing_Header] SET [IsCompleted]=1 Where RowID=@RowID";
-                                    using (SqlCommand commandline = new SqlCommand(str, connection))
+                                    using (SqlCommand command = new SqlCommand(cmdStr, connection))
                                     {
                                         #region --Add Parameters --
-                                        commandline.Parameters.AddWithValue("@RowID", HeaderRowID);
+                                        command.Parameters.AddWithValue("@Order_No", cbProductionNo.Text);
+                                        command.Parameters.AddWithValue("@WorkCenterGroup", cbWorkCenterGroup.Text);
                                         #endregion
-                                        commandline.CommandType = System.Data.CommandType.Text;
-                                        commandline.ExecuteNonQuery();
 
-                                        PktsList = new List<GridItemClass>();
-                                        cbWorkCenterGroup.Enabled = true;
-                                        
-                                        Application.DoEvents();
-                                        updateEPR();
-                                        dgvWeight.DataSource = PktsList;
-                                        lblNetWeight.Text = "0.00";
-                                        Application.DoEvents();
+                                        command.CommandType = System.Data.CommandType.Text;
+                                        if (connection.State == System.Data.ConnectionState.Closed) connection.Open();
+                                        int iRowUpdate = Convert.ToInt32(command.ExecuteNonQuery());
+                                        if (iRowUpdate > 0)
+                                        {
+                                            string str = "Update [tbl_Packing_Header] SET [IsCompleted]=1 Where RowID=@RowID";
+                                            using (SqlCommand commandline = new SqlCommand(str, connection))
+                                            {
+                                                #region --Add Parameters --
+                                                commandline.Parameters.AddWithValue("@RowID", HeaderRowID);
+                                                #endregion
+                                                commandline.CommandType = System.Data.CommandType.Text;
+                                                commandline.ExecuteNonQuery();
 
-                                        BindWorkCenterGroup();
-                                        Application.DoEvents();
+                                                PktsList = new List<GridItemClass>();
+                                                cbWorkCenterGroup.Enabled = true;
+
+                                                Application.DoEvents();
+                                                updateEPR();
+                                                dgvWeight.DataSource = PktsList;
+                                                lblNetWeight.Text = "0.00";
+                                                Application.DoEvents();
+
+                                                BindWorkCenterGroup();
+                                                Application.DoEvents();
+                                            }
+                                        }
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    MessageBox.Show(ex.Message);
+                                }
+                                finally
+                                {
+                                    if (connection.State == System.Data.ConnectionState.Open) connection.Close();
+                                    if (isPacking)
+                                    {
+                                        LoadProductionNos(false);
                                     }
                                 }
                             }
-                        }
-                        catch (Exception ex)
-                        {
-                            MessageBox.Show(ex.Message);
-                        }
-                        finally
-                        {
-                            if (connection.State == System.Data.ConnectionState.Open) connection.Close();
-                            if (isPacking)
-                            {
-                                LoadProductionNos(false);
-                            }
+
+                            //}
+                            //else
+                            //{
+                            //MessageBox.Show(isWithinTolerance ? "Weight is within tolerance." : "Weight is out of tolerance.");
+                            //MessageBox.Show($"{netWeight} is l","", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            //}
                         }
                     }
-
-                }
-                else
-                {
-                    MessageBox.Show(isWithinTolerance ? "Weight is within tolerance." : "Weight is out of tolerance.");
                 }
             }
             catch (Exception ex)
