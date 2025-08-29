@@ -698,6 +698,7 @@ FROM [tbl_ProdOrder_WorkCenterGroup] Where Order_No=@Order_No AND [IsCompleted]=
             }
         }
 
+        double prNetWeight = 0;
         private void btnGetData_Click(object sender, EventArgs e)
         {
             try
@@ -723,10 +724,6 @@ FROM [tbl_ProdOrder_WorkCenterGroup] Where Order_No=@Order_No AND [IsCompleted]=
 
                 double iGrossWeight = 0;
                 double.TryParse(lblGrossWeight.Text, out iGrossWeight);
-
-
-                //bool isWithinTolerance = IsWithinTolerance(Convert.ToDecimal(iGrossWeight), Convert.ToDecimal(iWeight), 0.05m);
-
                 double toleranceValue = (iGrossWeight * tolerancePercent) / 100.0;
 
                 double minWeight = iGrossWeight - toleranceValue;
@@ -742,23 +739,34 @@ FROM [tbl_ProdOrder_WorkCenterGroup] Where Order_No=@Order_No AND [IsCompleted]=
                 txtItemNo.Enabled = cbWorkCenterGroup.Enabled = txtLotNo.Enabled = false;
                 int SrnO = PktsList.Count + 1;
                 double NetWeight = 0;
-                foreach (GridItemClass pkt in PktsList)
-                {
-                    NetWeight += pkt.PacketWeight;
-                }
-                //decimal.TryParse(lblNetWeight.Text, out NetWeight);
-                if (NetWeight > iGrossWeight)
-                {
-                    MessageBox.Show($"Net Weight '{NetWeight}' can not be more then Gross Weight {iGrossWeight}.", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    return;
-                }
-                dgvWeight.DataSource = null;
+                //foreach (GridItemClass pkt in PktsList)
+                //{
+                //    NetWeight += pkt.PacketWeight;
+                //}
+                ////decimal.TryParse(lblNetWeight.Text, out NetWeight);
+                //if (NetWeight > iGrossWeight)
+                //{
+                //    MessageBox.Show($"Net Weight '{NetWeight}' can not be more then Gross Weight {iGrossWeight}.", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                //    return;
+                //}
+                
                 if (iWeight > 0)
                 {
-                    InsertPackingLine(iWeight);
                     PktsList.Add(new GridItemClass { SrNo = SrnO, PacketWeight = iWeight });
+                    foreach (GridItemClass pkt in PktsList)
+                    {
+                        NetWeight += pkt.PacketWeight;
+                    }
+                    if (NetWeight > iGrossWeight)
+                    {
+                        MessageBox.Show($"Net Weight '{NetWeight}' can not be more then Gross Weight {iGrossWeight}.", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        PktsList.RemoveAt(SrnO - 1);
+                        lblNetWeight.Text = prNetWeight.ToString();
+                        return;
+                    }
+                    InsertPackingLine(iWeight);
                 }
-
+                dgvWeight.DataSource = null;
                 dgvWeight.DataSource = PktsList;
                 dgvWeight.Columns[0].HeaderText = "Sr. No";
                 dgvWeight.Columns[1].HeaderText = "Weight";
@@ -767,6 +775,7 @@ FROM [tbl_ProdOrder_WorkCenterGroup] Where Order_No=@Order_No AND [IsCompleted]=
 
                 cbWorkCenterGroup.Enabled = false;
                 lblNetWeight.Text = NetWeight.ToString();
+                prNetWeight = NetWeight;
                 cbProductionNo.Enabled = false;
                 lblNetWeight.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             }
