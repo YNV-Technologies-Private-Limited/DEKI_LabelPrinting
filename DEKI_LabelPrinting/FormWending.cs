@@ -61,14 +61,20 @@ namespace DEKI_LabelPrinting
 
         private void FormWending_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (_serialPort.IsOpen)
+            try
             {
-                _serialPort.Close();
+                timerGetWeight.Stop();
+                timerGetWeight.Dispose();
+                if (_serialPort.IsOpen)
+                {
+                    _serialPort.Close();
+                }
+                if (null != _serialPort)
+                {
+                    _serialPort.Dispose();
+                }
             }
-            if (null != _serialPort)
-            {
-                _serialPort.Dispose();
-            }
+            catch { }
         }
 
         private void OpenSerialPort()
@@ -84,14 +90,17 @@ namespace DEKI_LabelPrinting
                 _serialPort.Handshake = Handshake.None;
                 _serialPort.Encoding = System.Text.Encoding.ASCII;
 
-                _serialPort.DataReceived += SerialPort_DataReceived;
+                //_serialPort.DataReceived += SerialPort_DataReceived;
 
 
                 _serialPort.Open();
+                timerGetWeight.Enabled = true;   // start timer
                 writeLog($"SerialPort Open Successfully");
             }
             catch (Exception ex)
             {
+                timerGetWeight.Enabled = false;  // stop timer
+                if ((_serialPort != null) && (_serialPort.IsOpen)) { _serialPort.Close(); }
                 writeLog($"Error in Open Serial Port {ex.Message}");
                 MessageBox.Show($"Error opening serial port: {ex.Message}");
             }
@@ -729,7 +738,7 @@ FROM [tbl_ProdOrder_WorkCenterGroup] Where Order_No=@Order_No AND [IsCompleted]=
                     MessageBox.Show($"Packet Weight '{iWeight}' can not be more then Gross Weight {iGrossWeight}.", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                 }
-
+                timerGetWeight.Enabled = false;
                 txtItemNo.Enabled = cbWorkCenterGroup.Enabled = txtLotNo.Enabled = false;
                 int SrnO = PktsList.Count + 1;
                 double NetWeight = 0;
@@ -764,6 +773,10 @@ FROM [tbl_ProdOrder_WorkCenterGroup] Where Order_No=@Order_No AND [IsCompleted]=
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                timerGetWeight.Enabled = true;
             }
         }
 
@@ -1133,6 +1146,35 @@ FROM [tbl_ProdOrder_WorkCenterGroup] Where Order_No=@Order_No AND [IsCompleted]=
                     getItemNetWeight(txtItemNo.Text);
                 }
             }
+        }
+
+        private void timerGetWeight_Tick(object sender, EventArgs e)
+        {
+            try
+            {
+                if (_serialPort != null && _serialPort.IsOpen && _serialPort.BytesToRead > 0)
+                {
+                    string data = _serialPort.ReadExisting();  // read available data
+                                                               //txtData.AppendText(data + Environment.NewLine);
+
+                    data = data.Replace("\u0002", "").Replace("\u0003", "").Trim();
+                    writeLog($"SerialPort_DataReceived _serialPort ReadLine - {_serialPort.ReadLine()}");
+                    //string data = _serialPort.ReadLine(); // Or ReadExisting()
+                    writeLog($"SerialPort_DataReceived _serialPort ReadExisting - {data}");
+                    //this.Invoke((MethodInvoker)(() => {
+                    if (data.Contains(',')) data = data.Split(',')[dataSplitIndex];
+                        
+                    lblWeight.Text = data.Trim(); // Display on UI thread
+                    //}));
+                }
+            }
+            catch (Exception ex)
+            {
+                writeLog($"SerialPort_DataReceived (1170)- {ex.Message}");
+                //timerGetWeight.Enabled = false;
+                //MessageBox.Show("Read error: " + ex.Message);
+            }
+
         }
     }
     public class UpdateLedEntryModel

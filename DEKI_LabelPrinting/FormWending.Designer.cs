@@ -72,6 +72,7 @@
             this.label15 = new System.Windows.Forms.Label();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.btnClear = new System.Windows.Forms.Button();
+            this.timerGetWeight = new System.Windows.Forms.Timer(this.components);
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbSyncvOrders)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbSettings)).BeginInit();
@@ -568,6 +569,11 @@
             this.btnClear.UseVisualStyleBackColor = true;
             this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
             // 
+            // timerGetWeight
+            // 
+            this.timerGetWeight.Interval = 3000;
+            this.timerGetWeight.Tick += new System.EventHandler(this.timerGetWeight_Tick);
+            // 
             // FormWending
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -670,5 +676,6 @@
         private System.Windows.Forms.PictureBox pbSyncvOrders;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.Button btnClear;
+        private System.Windows.Forms.Timer timerGetWeight;
     }
 }
