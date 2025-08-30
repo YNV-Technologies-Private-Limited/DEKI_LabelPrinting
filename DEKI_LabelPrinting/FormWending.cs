@@ -1197,6 +1197,20 @@ FROM [tbl_ProdOrder_WorkCenterGroup] Where Order_No=@Order_No AND [IsCompleted]=
             }
 
         }
+
+        private void pbSearchOrderNo_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                FormSearchOrderNo searchForm = new FormSearchOrderNo();
+                searchForm.ListOrderNOs = ProductionOrderNos;
+                if (searchForm.ShowDialog() == DialogResult.OK)
+                {
+                    cbProductionNo.Text = searchForm.OrderNo;
+                }
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message); }
+        }
     }
     public class UpdateLedEntryModel
     {

@@ -73,6 +73,9 @@
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.btnClear = new System.Windows.Forms.Button();
             this.timerGetWeight = new System.Windows.Forms.Timer(this.components);
+            this.pbSearchOrderNo = new System.Windows.Forms.PictureBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label14 = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbSyncvOrders)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbSettings)).BeginInit();
@@ -81,6 +84,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbRefresh)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvWeight)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbSearchOrderNo)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
@@ -97,7 +101,7 @@
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Margin = new System.Windows.Forms.Padding(2);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1096, 74);
+            this.panel1.Size = new System.Drawing.Size(1156, 74);
             this.panel1.TabIndex = 2;
             // 
             // pbSyncvOrders
@@ -106,7 +110,7 @@
             this.pbSyncvOrders.BackColor = System.Drawing.Color.Transparent;
             this.pbSyncvOrders.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pbSyncvOrders.Image = global::DEKI_LabelPrinting.Properties.Resources._4771267;
-            this.pbSyncvOrders.Location = new System.Drawing.Point(771, 5);
+            this.pbSyncvOrders.Location = new System.Drawing.Point(831, 5);
             this.pbSyncvOrders.Margin = new System.Windows.Forms.Padding(2);
             this.pbSyncvOrders.Name = "pbSyncvOrders";
             this.pbSyncvOrders.Size = new System.Drawing.Size(64, 64);
@@ -122,7 +126,7 @@
             this.pbSettings.BackColor = System.Drawing.Color.Transparent;
             this.pbSettings.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pbSettings.Image = global::DEKI_LabelPrinting.Properties.Resources._4771267;
-            this.pbSettings.Location = new System.Drawing.Point(852, 5);
+            this.pbSettings.Location = new System.Drawing.Point(912, 5);
             this.pbSettings.Margin = new System.Windows.Forms.Padding(2);
             this.pbSettings.Name = "pbSettings";
             this.pbSettings.Size = new System.Drawing.Size(64, 64);
@@ -151,7 +155,7 @@
             this.pictureBox3.BackColor = System.Drawing.Color.Transparent;
             this.pictureBox3.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pictureBox3.Image = global::DEKI_LabelPrinting.Properties.Resources.Close64x64;
-            this.pictureBox3.Location = new System.Drawing.Point(1012, 5);
+            this.pictureBox3.Location = new System.Drawing.Point(1072, 5);
             this.pictureBox3.Margin = new System.Windows.Forms.Padding(2);
             this.pictureBox3.Name = "pictureBox3";
             this.pictureBox3.Size = new System.Drawing.Size(64, 64);
@@ -167,7 +171,7 @@
             this.pictureBox2.BackColor = System.Drawing.Color.Transparent;
             this.pictureBox2.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pictureBox2.Image = global::DEKI_LabelPrinting.Properties.Resources.LogOut64X64;
-            this.pictureBox2.Location = new System.Drawing.Point(932, 5);
+            this.pictureBox2.Location = new System.Drawing.Point(992, 5);
             this.pictureBox2.Margin = new System.Windows.Forms.Padding(2);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(64, 64);
@@ -196,7 +200,7 @@
             this.label2.AutoSize = true;
             this.label2.BackColor = System.Drawing.Color.Transparent;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(19, 98);
+            this.label2.Location = new System.Drawing.Point(25, 99);
             this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(109, 20);
@@ -208,7 +212,7 @@
             this.label3.AutoSize = true;
             this.label3.BackColor = System.Drawing.Color.Transparent;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(459, 186);
+            this.label3.Location = new System.Drawing.Point(487, 186);
             this.label3.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(63, 20);
@@ -220,7 +224,7 @@
             this.label4.AutoSize = true;
             this.label4.BackColor = System.Drawing.Color.Transparent;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(19, 186);
+            this.label4.Location = new System.Drawing.Point(26, 186);
             this.label4.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(65, 20);
@@ -232,7 +236,7 @@
             this.label5.AutoSize = true;
             this.label5.BackColor = System.Drawing.Color.Transparent;
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(19, 141);
+            this.label5.Location = new System.Drawing.Point(26, 143);
             this.label5.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(89, 20);
@@ -244,7 +248,7 @@
             this.label6.AutoSize = true;
             this.label6.BackColor = System.Drawing.Color.Transparent;
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(373, 141);
+            this.label6.Location = new System.Drawing.Point(401, 144);
             this.label6.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(147, 20);
@@ -260,7 +264,7 @@
             this.btnGetData.Location = new System.Drawing.Point(522, 384);
             this.btnGetData.Margin = new System.Windows.Forms.Padding(2);
             this.btnGetData.Name = "btnGetData";
-            this.btnGetData.Size = new System.Drawing.Size(530, 50);
+            this.btnGetData.Size = new System.Drawing.Size(597, 50);
             this.btnGetData.TabIndex = 8;
             this.btnGetData.Text = "Get Weight";
             this.btnGetData.UseVisualStyleBackColor = true;
@@ -273,41 +277,42 @@
             // txtLotNo
             // 
             this.txtLotNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtLotNo.Location = new System.Drawing.Point(529, 186);
+            this.txtLotNo.Location = new System.Drawing.Point(558, 186);
             this.txtLotNo.Margin = new System.Windows.Forms.Padding(2);
             this.txtLotNo.Name = "txtLotNo";
-            this.txtLotNo.Size = new System.Drawing.Size(177, 28);
+            this.txtLotNo.Size = new System.Drawing.Size(194, 28);
             this.txtLotNo.TabIndex = 7;
             // 
             // txtItemNo
             // 
             this.txtItemNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtItemNo.Location = new System.Drawing.Point(131, 186);
+            this.txtItemNo.Location = new System.Drawing.Point(137, 186);
             this.txtItemNo.Margin = new System.Windows.Forms.Padding(2);
             this.txtItemNo.Name = "txtItemNo";
-            this.txtItemNo.Size = new System.Drawing.Size(320, 28);
+            this.txtItemNo.Size = new System.Drawing.Size(295, 28);
             this.txtItemNo.TabIndex = 6;
             // 
             // txtRoutingNo
             // 
             this.txtRoutingNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtRoutingNo.Location = new System.Drawing.Point(133, 141);
+            this.txtRoutingNo.Location = new System.Drawing.Point(137, 141);
             this.txtRoutingNo.Margin = new System.Windows.Forms.Padding(2);
             this.txtRoutingNo.Name = "txtRoutingNo";
-            this.txtRoutingNo.Size = new System.Drawing.Size(225, 28);
+            this.txtRoutingNo.Size = new System.Drawing.Size(262, 28);
             this.txtRoutingNo.TabIndex = 2;
             // 
             // pbRefresh
             // 
             this.pbRefresh.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pbRefresh.Image = global::DEKI_LabelPrinting.Properties.Resources.Refresh32x32;
-            this.pbRefresh.Location = new System.Drawing.Point(357, 95);
+            this.pbRefresh.Location = new System.Drawing.Point(388, 95);
             this.pbRefresh.Margin = new System.Windows.Forms.Padding(2);
             this.pbRefresh.Name = "pbRefresh";
             this.pbRefresh.Size = new System.Drawing.Size(32, 32);
             this.pbRefresh.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
             this.pbRefresh.TabIndex = 14;
             this.pbRefresh.TabStop = false;
+            this.toolTip1.SetToolTip(this.pbRefresh, "Refresh Order Nos");
             this.pbRefresh.Click += new System.EventHandler(this.pbRefresh_Click);
             // 
             // cbProductionNo
@@ -315,10 +320,10 @@
             this.cbProductionNo.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
             this.cbProductionNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbProductionNo.FormattingEnabled = true;
-            this.cbProductionNo.Location = new System.Drawing.Point(133, 96);
+            this.cbProductionNo.Location = new System.Drawing.Point(137, 96);
             this.cbProductionNo.Margin = new System.Windows.Forms.Padding(2);
             this.cbProductionNo.Name = "cbProductionNo";
-            this.cbProductionNo.Size = new System.Drawing.Size(218, 30);
+            this.cbProductionNo.Size = new System.Drawing.Size(220, 30);
             this.cbProductionNo.TabIndex = 0;
             this.cbProductionNo.SelectedIndexChanged += new System.EventHandler(this.cbProductionNo_SelectedIndexChanged);
             this.cbProductionNo.KeyUp += new System.Windows.Forms.KeyEventHandler(this.cbProductionNo_KeyUp);
@@ -328,10 +333,10 @@
             this.cbWorkCenterGroup.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
             this.cbWorkCenterGroup.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbWorkCenterGroup.FormattingEnabled = true;
-            this.cbWorkCenterGroup.Location = new System.Drawing.Point(524, 141);
+            this.cbWorkCenterGroup.Location = new System.Drawing.Point(553, 141);
             this.cbWorkCenterGroup.Margin = new System.Windows.Forms.Padding(2);
             this.cbWorkCenterGroup.Name = "cbWorkCenterGroup";
-            this.cbWorkCenterGroup.Size = new System.Drawing.Size(181, 30);
+            this.cbWorkCenterGroup.Size = new System.Drawing.Size(198, 30);
             this.cbWorkCenterGroup.TabIndex = 3;
             this.cbWorkCenterGroup.SelectedIndexChanged += new System.EventHandler(this.cbWorkCenterGroup_SelectedIndexChanged);
             // 
@@ -342,7 +347,7 @@
             this.lblWeight.Location = new System.Drawing.Point(524, 257);
             this.lblWeight.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblWeight.Name = "lblWeight";
-            this.lblWeight.Size = new System.Drawing.Size(528, 125);
+            this.lblWeight.Size = new System.Drawing.Size(595, 125);
             this.lblWeight.TabIndex = 15;
             this.lblWeight.Text = "001.143";
             this.lblWeight.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -394,10 +399,10 @@
             this.btnSubmit.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.btnSubmit.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnSubmit.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.btnSubmit.Location = new System.Drawing.Point(520, 570);
+            this.btnSubmit.Location = new System.Drawing.Point(520, 575);
             this.btnSubmit.Margin = new System.Windows.Forms.Padding(2);
             this.btnSubmit.Name = "btnSubmit";
-            this.btnSubmit.Size = new System.Drawing.Size(451, 72);
+            this.btnSubmit.Size = new System.Drawing.Size(493, 72);
             this.btnSubmit.TabIndex = 9;
             this.btnSubmit.Text = "Submit Details";
             this.btnSubmit.UseVisualStyleBackColor = true;
@@ -432,7 +437,7 @@
             this.lblNetWeight.AutoSize = true;
             this.lblNetWeight.BackColor = System.Drawing.Color.Transparent;
             this.lblNetWeight.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblNetWeight.Location = new System.Drawing.Point(722, 495);
+            this.lblNetWeight.Location = new System.Drawing.Point(722, 517);
             this.lblNetWeight.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblNetWeight.Name = "lblNetWeight";
             this.lblNetWeight.Size = new System.Drawing.Size(71, 33);
@@ -444,7 +449,7 @@
             this.label10.AutoSize = true;
             this.label10.BackColor = System.Drawing.Color.Transparent;
             this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label10.Location = new System.Drawing.Point(525, 495);
+            this.label10.Location = new System.Drawing.Point(525, 517);
             this.label10.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(148, 31);
@@ -466,7 +471,7 @@
             // txtOperationNo
             // 
             this.txtOperationNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtOperationNo.Location = new System.Drawing.Point(821, 141);
+            this.txtOperationNo.Location = new System.Drawing.Point(866, 141);
             this.txtOperationNo.Margin = new System.Windows.Forms.Padding(2);
             this.txtOperationNo.Name = "txtOperationNo";
             this.txtOperationNo.Size = new System.Drawing.Size(76, 38);
@@ -478,7 +483,7 @@
             this.label11.AutoSize = true;
             this.label11.BackColor = System.Drawing.Color.Transparent;
             this.label11.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label11.Location = new System.Drawing.Point(714, 141);
+            this.label11.Location = new System.Drawing.Point(759, 141);
             this.label11.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(103, 20);
@@ -488,10 +493,10 @@
             // txtQuantity
             // 
             this.txtQuantity.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtQuantity.Location = new System.Drawing.Point(947, 141);
+            this.txtQuantity.Location = new System.Drawing.Point(991, 141);
             this.txtQuantity.Margin = new System.Windows.Forms.Padding(2);
             this.txtQuantity.Name = "txtQuantity";
-            this.txtQuantity.Size = new System.Drawing.Size(122, 38);
+            this.txtQuantity.Size = new System.Drawing.Size(128, 38);
             this.txtQuantity.TabIndex = 5;
             this.txtQuantity.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.txtQuantity.TextChanged += new System.EventHandler(this.txtQuantity_TextChanged);
@@ -501,7 +506,7 @@
             this.label12.AutoSize = true;
             this.label12.BackColor = System.Drawing.Color.Transparent;
             this.label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label12.Location = new System.Drawing.Point(910, 141);
+            this.label12.Location = new System.Drawing.Point(952, 144);
             this.label12.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(37, 20);
@@ -511,10 +516,10 @@
             // txtProductionDate
             // 
             this.txtProductionDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtProductionDate.Location = new System.Drawing.Point(527, 96);
+            this.txtProductionDate.Location = new System.Drawing.Point(556, 96);
             this.txtProductionDate.Margin = new System.Windows.Forms.Padding(2);
             this.txtProductionDate.Name = "txtProductionDate";
-            this.txtProductionDate.Size = new System.Drawing.Size(180, 28);
+            this.txtProductionDate.Size = new System.Drawing.Size(197, 28);
             this.txtProductionDate.TabIndex = 1;
             // 
             // label13
@@ -522,7 +527,7 @@
             this.label13.AutoSize = true;
             this.label13.BackColor = System.Drawing.Color.Transparent;
             this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label13.Location = new System.Drawing.Point(400, 100);
+            this.label13.Location = new System.Drawing.Point(428, 100);
             this.label13.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(124, 20);
@@ -534,7 +539,7 @@
             this.lblItemWeight.AutoSize = true;
             this.lblItemWeight.BackColor = System.Drawing.Color.Transparent;
             this.lblItemWeight.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblItemWeight.Location = new System.Drawing.Point(823, 184);
+            this.lblItemWeight.Location = new System.Drawing.Point(862, 184);
             this.lblItemWeight.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblItemWeight.Name = "lblItemWeight";
             this.lblItemWeight.Size = new System.Drawing.Size(67, 31);
@@ -546,7 +551,7 @@
             this.label15.AutoSize = true;
             this.label15.BackColor = System.Drawing.Color.Transparent;
             this.label15.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label15.Location = new System.Drawing.Point(720, 189);
+            this.label15.Location = new System.Drawing.Point(759, 189);
             this.label15.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(95, 20);
@@ -560,7 +565,7 @@
             this.btnClear.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnClear.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
             this.btnClear.Image = global::DEKI_LabelPrinting.Properties.Resources._899025;
-            this.btnClear.Location = new System.Drawing.Point(978, 570);
+            this.btnClear.Location = new System.Drawing.Point(1041, 573);
             this.btnClear.Margin = new System.Windows.Forms.Padding(2);
             this.btnClear.Name = "btnClear";
             this.btnClear.Size = new System.Drawing.Size(78, 72);
@@ -574,13 +579,54 @@
             this.timerGetWeight.Interval = 3000;
             this.timerGetWeight.Tick += new System.EventHandler(this.timerGetWeight_Tick);
             // 
+            // pbSearchOrderNo
+            // 
+            this.pbSearchOrderNo.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.pbSearchOrderNo.Image = global::DEKI_LabelPrinting.Properties.Resources.Search_16x16;
+            this.pbSearchOrderNo.Location = new System.Drawing.Point(359, 96);
+            this.pbSearchOrderNo.Margin = new System.Windows.Forms.Padding(2);
+            this.pbSearchOrderNo.Name = "pbSearchOrderNo";
+            this.pbSearchOrderNo.Size = new System.Drawing.Size(24, 27);
+            this.pbSearchOrderNo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pbSearchOrderNo.TabIndex = 32;
+            this.pbSearchOrderNo.TabStop = false;
+            this.toolTip1.SetToolTip(this.pbSearchOrderNo, "Sarch Order NO");
+            this.pbSearchOrderNo.Click += new System.EventHandler(this.pbSearchOrderNo_Click);
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.BackColor = System.Drawing.Color.Transparent;
+            this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label9.Location = new System.Drawing.Point(534, 488);
+            this.label9.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(122, 13);
+            this.label9.TabIndex = 33;
+            this.label9.Text = "(Item Weight X Quantity)";
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.BackColor = System.Drawing.Color.Transparent;
+            this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label14.Location = new System.Drawing.Point(529, 551);
+            this.label14.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(198, 13);
+            this.label14.TabIndex = 34;
+            this.label14.Text = "(Sum of Weight Captured (pkt weighing))";
+            // 
             // FormWending
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = global::DEKI_LabelPrinting.Properties.Resources.BG;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.ClientSize = new System.Drawing.Size(1096, 666);
+            this.ClientSize = new System.Drawing.Size(1156, 666);
+            this.Controls.Add(this.label14);
+            this.Controls.Add(this.label9);
+            this.Controls.Add(this.pbSearchOrderNo);
             this.Controls.Add(this.btnClear);
             this.Controls.Add(this.lblItemWeight);
             this.Controls.Add(this.label15);
@@ -629,6 +675,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbRefresh)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvWeight)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbSearchOrderNo)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -677,5 +724,8 @@
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.Button btnClear;
         private System.Windows.Forms.Timer timerGetWeight;
+        private System.Windows.Forms.PictureBox pbSearchOrderNo;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label label14;
     }
 }

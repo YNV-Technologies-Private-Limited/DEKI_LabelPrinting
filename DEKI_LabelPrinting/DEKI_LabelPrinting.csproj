@@ -129,6 +129,12 @@
     <Compile Include="FormRelProdOrdersSync.Designer.cs">
       <DependentUpon>FormRelProdOrdersSync.cs</DependentUpon>
     </Compile>
+    <Compile Include="FormSearchOrderNo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormSearchOrderNo.Designer.cs">
+      <DependentUpon>FormSearchOrderNo.cs</DependentUpon>
+    </Compile>
     <Compile Include="FormTiles.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -164,6 +170,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FormRelProdOrdersSync.resx">
       <DependentUpon>FormRelProdOrdersSync.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormSearchOrderNo.resx">
+      <DependentUpon>FormSearchOrderNo.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormTiles.resx">
       <DependentUpon>FormTiles.cs</DependentUpon>
@@ -271,6 +280,7 @@
     <None Include="Resources\899025.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\Search_16x16.png" />
     <Content Include="weight.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
