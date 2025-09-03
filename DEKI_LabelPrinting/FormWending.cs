@@ -26,6 +26,8 @@ namespace DEKI_LabelPrinting
         string username = Convert.ToString(System.Configuration.ConfigurationManager.AppSettings["APIUser"]);// "administrator";
         string password = Convert.ToString(System.Configuration.ConfigurationManager.AppSettings["APIPassword"]);//"CMk95*@$46@";
         int dataSplitIndex = Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["dataSplitIndex"]);
+        double weightTolerance = 5.0;
+        
         DateTime ProdOrderCutOffDate = Convert.ToDateTime(System.Configuration.ConfigurationManager.AppSettings["ProdOrderCutOffDate"]);
         List<RelProdOrder> List_ProductionOrders = new List<RelProdOrder>();
         List<RoutingLine> List_RoutingLine = new List<RoutingLine>();
@@ -36,7 +38,7 @@ namespace DEKI_LabelPrinting
         List<GridItemClass> PktsList = new List<GridItemClass>();
         List<CapLedEntryModel> List_CapLedEntryModel = new List<CapLedEntryModel>();
 
-        double tolerancePercent = 10.0;
+        //double tolerancePercent = 10.0;
         public string ProdOrders
         {
             get
@@ -158,6 +160,8 @@ namespace DEKI_LabelPrinting
 
         private void FormWending_Load(object sender, EventArgs e)
         {
+            lblWeightInclTolerance.Text = string.Empty;
+            pbSyncvOrders.Visible = pbSettings.Visible = false;
             PktsList = new List<GridItemClass>();
             if (string.IsNullOrEmpty($"{APIUrl.TrimEnd('/')}/{ProdOrders}"))
             {
@@ -169,6 +173,8 @@ namespace DEKI_LabelPrinting
             {
                 ProdOrderCutOffDate = Convert.ToDateTime(System.Configuration.ConfigurationManager.AppSettings["ProdOrderCutOffDate"]);
                 LoadProductionNos(false);
+                weightTolerance = Convert.ToDouble(System.Configuration.ConfigurationManager.AppSettings["weightTolerance"]);
+                lblWeightTolerance.Text = $"Weight Tolerance for Packing: - {weightTolerance}";
             }
             catch (Exception ex)
             {
@@ -444,26 +450,18 @@ namespace DEKI_LabelPrinting
             if ((null != relProdOrder))
             {
                 cbWorkCenterGroup.Enabled = txtLotNo.Enabled = cbWorkCenterGroup.Enabled = txtItemNo.Enabled = true;
-                //txtItemNo.Text = relProdOrder.Description;
-                //txtItemNo.Enabled = false;
-                //txtLotNo.BackColor = Color.White;
                 txtItemNo.Text = relProdOrder.Source_No;
                 txtItemNo.Enabled = false;
                 txtRoutingNo.Text = relProdOrder.Routing_No;
                 txtRoutingNo.Enabled = false;
                 txtProductionDate.Text = relProdOrder.Creation_Date.ToString("dd/MM/yyyy");
                 txtProductionDate.Enabled = false;
-                //txtQuantity.Text = Convert.ToString(relProdOrder.Quantity);
-                //txtQuantity.Enabled = false;
                 txtLotNo.Text = relProdOrder.LOTNo;
                 txtLotNo.Enabled = false;
 
                 txtRoutingNo.BackColor = txtOperationNo.BackColor = txtProductionDate.BackColor = txtQuantity.BackColor = txtItemNo.BackColor = txtLotNo.BackColor = Color.White;
                 txtRoutingNo.ForeColor = txtOperationNo.ForeColor = txtProductionDate.ForeColor = Color.Black;
                 getItemNetWeight(relProdOrder.Source_No);
-
-                //List<string> routings=from c as List_RoutingLine.ase
-                //txtWorkCenterGroup.Text=relProdOrder.
                 BindWorkCenterGroup();
             }
         }
@@ -489,25 +487,6 @@ namespace DEKI_LabelPrinting
                     txtQuantity.Enabled = false;
                 }
             }
-
-
-            //Check if user has already completed the Packing 
-            //string chkPkg = @"SELECT 'Result' = [OutputQuantity] FROM [CapLedEntryAPI] Where OrderNo=@OrderNo and WorkCenterGroupCode=@WorkCenterGroupCode";
-            //using (SqlConnection connection = new SqlConnection(connectionString))
-            //{
-            //    try
-            //    {
-            //        using (SqlCommand command = new SqlCommand(chkPkg, connection))
-            //        {
-            //            command.Parameters.AddWithValue("@OrderNo", cbProductionNo.Text);
-            //            command.Parameters.AddWithValue("@WorkCenterGroupCode", cbWorkCenterGroup.Text);
-            //            command.CommandType = System.Data.CommandType.Text;
-            //            if (connection.State == System.Data.ConnectionState.Closed) connection.Open();
-            //            Qty = Convert.ToDecimal(command.ExecuteScalar());
-            //        }
-            //    }
-            //    catch { }
-            //}
             return Qty;
         }
         void BindWorkCenterGroup()
@@ -535,6 +514,7 @@ namespace DEKI_LabelPrinting
                 , MessageBoxButtons.OK, MessageBoxIcon.Information);
                 cbProductionNo.SelectedIndex = 0;
                 cbWorkCenterGroup.DataSource = null;
+                txtItemNo.Text = txtLotNo.Text = txtRoutingNo.Text= txtProductionDate.Text= lblItemWeight.Text= string.Empty;
                 return;
             }
 
@@ -646,6 +626,10 @@ FROM [tbl_ProdOrder_WorkCenterGroup] Where Order_No=@Order_No AND [IsCompleted]=
                                 {
                                     grams = (ItemGrodsWeight * Qty);
                                     double kilograms = grams / 1000;
+
+                                    double toleranceValue = (kilograms * weightTolerance) / 100.0;
+                                    double maxWeight = kilograms + toleranceValue;
+                                    lblWeightInclTolerance.Text = $"Weight Incl. Tolerance (Packing): - {maxWeight}";
                                     lblGrossWeight.Text = kilograms.ToString();
                                     Application.DoEvents();
                                     lblGrossWeight.Refresh();
@@ -686,12 +670,6 @@ FROM [tbl_ProdOrder_WorkCenterGroup] Where Order_No=@Order_No AND [IsCompleted]=
                         txtRoutingNo.Text = relProdOrder.Routing_No;
                         
                         BindWorkCenterGroup();
-                        //var matchedRoutes = List_RoutingLine.Where(r => r.Routing_No == txtRoutingNo.Text).Distinct().ToList();
-                        //cbWorkCenterGroup.DataSource = null;
-                        //cbWorkCenterGroup.DataSource = matchedRoutes;
-                        //cbWorkCenterGroup.DisplayMember = "Work_Center_Group_Code";
-                        //cbWorkCenterGroup.Items.Insert(0, "-- Select --");
-                        //cbWorkCenterGroup.DropDownStyle = ComboBoxStyle.DropDownList;
                     }
                 }
                 catch(Exception ex) { MessageBox.Show(ex.Message); }
@@ -724,10 +702,23 @@ FROM [tbl_ProdOrder_WorkCenterGroup] Where Order_No=@Order_No AND [IsCompleted]=
 
                 double iGrossWeight = 0;
                 double.TryParse(lblGrossWeight.Text, out iGrossWeight);
-                double toleranceValue = (iGrossWeight * tolerancePercent) / 100.0;
-
+                double toleranceValue = (iGrossWeight * weightTolerance) / 100.0;
                 double minWeight = iGrossWeight - toleranceValue;
                 double maxWeight = iGrossWeight + toleranceValue;
+
+                double dbl = Convert.ToDouble(lblNetWeight.Text);
+                lblNetWeight.Text = dbl.ToString("F2");
+
+                double NetWt = Convert.ToDouble(lblNetWeight.Text);
+                double TotalWeight = NetWt + iWeight;
+                if (cbWorkCenterGroup.Text.Trim().Equals("Packing", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    if (TotalWeight > maxWeight)
+                    {
+                        MessageBox.Show("Weight is out of tolerance.","Weighing", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+                }
 
                 //if (iWeight > iGrossWeight)
                 if (iWeight > maxWeight)
@@ -739,17 +730,6 @@ FROM [tbl_ProdOrder_WorkCenterGroup] Where Order_No=@Order_No AND [IsCompleted]=
                 txtItemNo.Enabled = cbWorkCenterGroup.Enabled = txtLotNo.Enabled = false;
                 int SrnO = PktsList.Count + 1;
                 double NetWeight = 0;
-                //foreach (GridItemClass pkt in PktsList)
-                //{
-                //    NetWeight += pkt.PacketWeight;
-                //}
-                ////decimal.TryParse(lblNetWeight.Text, out NetWeight);
-                //if (NetWeight > iGrossWeight)
-                //{
-                //    MessageBox.Show($"Net Weight '{NetWeight}' can not be more then Gross Weight {iGrossWeight}.", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                //    return;
-                //}
-                
                 if (iWeight > 0)
                 {
                     PktsList.Add(new GridItemClass { SrNo = SrnO, PacketWeight = iWeight });
@@ -757,14 +737,15 @@ FROM [tbl_ProdOrder_WorkCenterGroup] Where Order_No=@Order_No AND [IsCompleted]=
                     {
                         NetWeight += pkt.PacketWeight;
                     }
-                    if (NetWeight > iGrossWeight)
+                    //if (NetWeight > maxWeight)
+                    if (NetWeight > maxWeight)
                     {
-                        MessageBox.Show($"Net Weight '{NetWeight}' can not be more then Gross Weight {iGrossWeight}.", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show($"Net Weight '{NetWeight}' can not be more then Gross Weight {iGrossWeight} & Including tolerance Weight {maxWeight}.", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         PktsList.RemoveAt(SrnO - 1);
                         lblNetWeight.Text = prNetWeight.ToString();
                         return;
                     }
-                    InsertPackingLine(iWeight);
+                    //InsertPackingLine(iWeight);
                 }
                 dgvWeight.DataSource = null;
                 dgvWeight.DataSource = PktsList;
@@ -874,7 +855,16 @@ FROM [tbl_ProdOrder_WorkCenterGroup] Where Order_No=@Order_No AND [IsCompleted]=
                 decimal.TryParse(lblGrossWeight.Text, out grossWeight);
                 decimal.TryParse(lblNetWeight.Text, out netWeight);
 
-                bool isWithinTolerance = IsWithinTolerance(grossWeight, netWeight, 0.05m);
+                
+                if (cbWorkCenterGroup.Text.Trim().Equals("Packing", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    bool isWithinTolerance = IsWithinTolerance(grossWeight, netWeight, Convert.ToDecimal(10));
+                    if (!isWithinTolerance)
+                    {
+                        MessageBox.Show(isWithinTolerance ? "Weight is within tolerance." : "Weight is out of tolerance.");
+                        return;
+                    }
+                }
                 string workCenterGroup = cbWorkCenterGroup.Text;
                 bool isPacking = false;
                 if (dgvWeight.Rows.Count > 0)
@@ -887,6 +877,13 @@ FROM [tbl_ProdOrder_WorkCenterGroup] Where Order_No=@Order_No AND [IsCompleted]=
                             //if (isWithinTolerance)
                             //if (netWeight <= grossWeight)
                             //{
+                            foreach (DataGridViewRow row in dgvWeight.Rows)
+                            {
+                                double iWeight = (double)row.Cells[1].Value;
+                                InsertPackingLine(iWeight);
+                            }
+
+
                             string cmdStr = @"Update [tbl_ProdOrder_WorkCenterGroup] SET [IsCompleted]=1  Where [Order_No]=@Order_No AND [WorkCenterGroup]=@WorkCenterGroup";
 
                             if (cbWorkCenterGroup.Text.Trim().Equals("Packing", StringComparison.CurrentCultureIgnoreCase))
@@ -945,6 +942,7 @@ FROM [tbl_ProdOrder_WorkCenterGroup] Where Order_No=@Order_No AND [IsCompleted]=
                                     {
                                         LoadProductionNos(false);
                                     }
+                                    cbProductionNo.Enabled = true;
                                 }
                             }
 

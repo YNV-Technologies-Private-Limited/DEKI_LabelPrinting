@@ -72,10 +72,12 @@
             this.label15 = new System.Windows.Forms.Label();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.btnClear = new System.Windows.Forms.Button();
-            this.timerGetWeight = new System.Windows.Forms.Timer(this.components);
             this.pbSearchOrderNo = new System.Windows.Forms.PictureBox();
+            this.timerGetWeight = new System.Windows.Forms.Timer(this.components);
             this.label9 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
+            this.lblWeightTolerance = new System.Windows.Forms.Label();
+            this.lblWeightInclTolerance = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbSyncvOrders)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbSettings)).BeginInit();
@@ -261,7 +263,7 @@
             this.btnGetData.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.btnGetData.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnGetData.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.btnGetData.Location = new System.Drawing.Point(522, 384);
+            this.btnGetData.Location = new System.Drawing.Point(522, 375);
             this.btnGetData.Margin = new System.Windows.Forms.Padding(2);
             this.btnGetData.Name = "btnGetData";
             this.btnGetData.Size = new System.Drawing.Size(597, 50);
@@ -347,7 +349,7 @@
             this.lblWeight.Location = new System.Drawing.Point(524, 257);
             this.lblWeight.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblWeight.Name = "lblWeight";
-            this.lblWeight.Size = new System.Drawing.Size(595, 125);
+            this.lblWeight.Size = new System.Drawing.Size(595, 118);
             this.lblWeight.TabIndex = 15;
             this.lblWeight.Text = "001.143";
             this.lblWeight.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -378,7 +380,7 @@
             this.dgvWeight.RowHeadersVisible = false;
             this.dgvWeight.RowHeadersWidth = 51;
             this.dgvWeight.RowTemplate.Height = 24;
-            this.dgvWeight.Size = new System.Drawing.Size(446, 391);
+            this.dgvWeight.Size = new System.Drawing.Size(446, 436);
             this.dgvWeight.TabIndex = 16;
             // 
             // label7
@@ -399,7 +401,7 @@
             this.btnSubmit.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.btnSubmit.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnSubmit.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.btnSubmit.Location = new System.Drawing.Point(520, 575);
+            this.btnSubmit.Location = new System.Drawing.Point(520, 607);
             this.btnSubmit.Margin = new System.Windows.Forms.Padding(2);
             this.btnSubmit.Name = "btnSubmit";
             this.btnSubmit.Size = new System.Drawing.Size(493, 72);
@@ -413,7 +415,7 @@
             this.label8.AutoSize = true;
             this.label8.BackColor = System.Drawing.Color.Transparent;
             this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F);
-            this.label8.Location = new System.Drawing.Point(525, 454);
+            this.label8.Location = new System.Drawing.Point(525, 434);
             this.label8.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(178, 31);
@@ -425,7 +427,7 @@
             this.lblGrossWeight.AutoSize = true;
             this.lblGrossWeight.BackColor = System.Drawing.Color.Transparent;
             this.lblGrossWeight.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblGrossWeight.Location = new System.Drawing.Point(722, 453);
+            this.lblGrossWeight.Location = new System.Drawing.Point(722, 433);
             this.lblGrossWeight.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblGrossWeight.Name = "lblGrossWeight";
             this.lblGrossWeight.Size = new System.Drawing.Size(67, 31);
@@ -437,7 +439,7 @@
             this.lblNetWeight.AutoSize = true;
             this.lblNetWeight.BackColor = System.Drawing.Color.Transparent;
             this.lblNetWeight.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblNetWeight.Location = new System.Drawing.Point(722, 517);
+            this.lblNetWeight.Location = new System.Drawing.Point(722, 497);
             this.lblNetWeight.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblNetWeight.Name = "lblNetWeight";
             this.lblNetWeight.Size = new System.Drawing.Size(71, 33);
@@ -449,7 +451,7 @@
             this.label10.AutoSize = true;
             this.label10.BackColor = System.Drawing.Color.Transparent;
             this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label10.Location = new System.Drawing.Point(525, 517);
+            this.label10.Location = new System.Drawing.Point(525, 497);
             this.label10.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(148, 31);
@@ -565,7 +567,7 @@
             this.btnClear.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnClear.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
             this.btnClear.Image = global::DEKI_LabelPrinting.Properties.Resources._899025;
-            this.btnClear.Location = new System.Drawing.Point(1041, 573);
+            this.btnClear.Location = new System.Drawing.Point(1041, 605);
             this.btnClear.Margin = new System.Windows.Forms.Padding(2);
             this.btnClear.Name = "btnClear";
             this.btnClear.Size = new System.Drawing.Size(78, 72);
@@ -573,11 +575,6 @@
             this.toolTip1.SetToolTip(this.btnClear, "Delete Weighing Lines");
             this.btnClear.UseVisualStyleBackColor = true;
             this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
-            // 
-            // timerGetWeight
-            // 
-            this.timerGetWeight.Interval = 3000;
-            this.timerGetWeight.Tick += new System.EventHandler(this.timerGetWeight_Tick);
             // 
             // pbSearchOrderNo
             // 
@@ -593,12 +590,17 @@
             this.toolTip1.SetToolTip(this.pbSearchOrderNo, "Sarch Order NO");
             this.pbSearchOrderNo.Click += new System.EventHandler(this.pbSearchOrderNo_Click);
             // 
+            // timerGetWeight
+            // 
+            this.timerGetWeight.Interval = 3000;
+            this.timerGetWeight.Tick += new System.EventHandler(this.timerGetWeight_Tick);
+            // 
             // label9
             // 
             this.label9.AutoSize = true;
             this.label9.BackColor = System.Drawing.Color.Transparent;
             this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label9.Location = new System.Drawing.Point(534, 488);
+            this.label9.Location = new System.Drawing.Point(534, 468);
             this.label9.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(122, 13);
@@ -610,12 +612,36 @@
             this.label14.AutoSize = true;
             this.label14.BackColor = System.Drawing.Color.Transparent;
             this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label14.Location = new System.Drawing.Point(529, 551);
+            this.label14.Location = new System.Drawing.Point(529, 531);
             this.label14.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(198, 13);
             this.label14.TabIndex = 34;
             this.label14.Text = "(Sum of Weight Captured (pkt weighing))";
+            // 
+            // lblWeightTolerance
+            // 
+            this.lblWeightTolerance.AutoSize = true;
+            this.lblWeightTolerance.BackColor = System.Drawing.Color.Transparent;
+            this.lblWeightTolerance.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblWeightTolerance.Location = new System.Drawing.Point(534, 562);
+            this.lblWeightTolerance.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblWeightTolerance.Name = "lblWeightTolerance";
+            this.lblWeightTolerance.Size = new System.Drawing.Size(92, 13);
+            this.lblWeightTolerance.TabIndex = 35;
+            this.lblWeightTolerance.Text = "Weight Tolerance";
+            // 
+            // lblWeightInclTolerance
+            // 
+            this.lblWeightInclTolerance.AutoSize = true;
+            this.lblWeightInclTolerance.BackColor = System.Drawing.Color.Transparent;
+            this.lblWeightInclTolerance.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblWeightInclTolerance.Location = new System.Drawing.Point(534, 588);
+            this.lblWeightInclTolerance.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblWeightInclTolerance.Name = "lblWeightInclTolerance";
+            this.lblWeightInclTolerance.Size = new System.Drawing.Size(92, 13);
+            this.lblWeightInclTolerance.TabIndex = 36;
+            this.lblWeightInclTolerance.Text = "Weight Tolerance";
             // 
             // FormWending
             // 
@@ -623,7 +649,9 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = global::DEKI_LabelPrinting.Properties.Resources.BG;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.ClientSize = new System.Drawing.Size(1156, 666);
+            this.ClientSize = new System.Drawing.Size(1156, 705);
+            this.Controls.Add(this.lblWeightInclTolerance);
+            this.Controls.Add(this.lblWeightTolerance);
             this.Controls.Add(this.label14);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.pbSearchOrderNo);
@@ -727,5 +755,7 @@
         private System.Windows.Forms.PictureBox pbSearchOrderNo;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.Label lblWeightTolerance;
+        private System.Windows.Forms.Label lblWeightInclTolerance;
     }
 }
