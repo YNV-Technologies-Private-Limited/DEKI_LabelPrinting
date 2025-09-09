@@ -850,20 +850,33 @@ FROM [tbl_ProdOrder_WorkCenterGroup] Where Order_No=@Order_No AND [IsCompleted]=
         {
             try
             {
-                decimal grossWeight = 0; // Example value
-                decimal netWeight = 0;   // Example value
-                decimal.TryParse(lblGrossWeight.Text, out grossWeight);
-                decimal.TryParse(lblNetWeight.Text, out netWeight);
-
+                double grossWeight = 0; // Example value
+                double netWeight = 0;   // Example value
+                double.TryParse(lblGrossWeight.Text, out grossWeight);
+                double.TryParse(lblNetWeight.Text, out netWeight);
                 
+                double toleranceWeight = (grossWeight * weightTolerance) / 100.0;
+                double minWeight = grossWeight - toleranceWeight;
+                double maxWeight = grossWeight + toleranceWeight;
+                if (netWeight > maxWeight)
+                {
+                    MessageBox.Show($"Weight {netWeight} is maximum than weight of tolerance {maxWeight}.");
+                    return;
+                }
                 if (cbWorkCenterGroup.Text.Trim().Equals("Packing", StringComparison.CurrentCultureIgnoreCase))
                 {
-                    bool isWithinTolerance = IsWithinTolerance(grossWeight, netWeight, Convert.ToDecimal(10));
-                    if (!isWithinTolerance)
+                    if (netWeight < minWeight)
                     {
-                        MessageBox.Show(isWithinTolerance ? "Weight is within tolerance." : "Weight is out of tolerance.");
+                        MessageBox.Show($"Weight is lesser than tolerance weight {netWeight}.");
                         return;
                     }
+
+                    //bool isWithinTolerance = IsWithinTolerance(grossWeight, netWeight, Convert.ToDecimal(10));
+                    //if (!isWithinTolerance)
+                    //{
+                    //  MessageBox.Show(isWithinTolerance ? "Weight is within tolerance." : "Weight is out of tolerance.");
+                    //  return;
+                    //}
                 }
                 string workCenterGroup = cbWorkCenterGroup.Text;
                 bool isPacking = false;
